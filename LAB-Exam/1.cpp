@@ -1,83 +1,99 @@
 // 1. Matrix Addition
 
 // #include <iostream>
-// #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// void addRow(const vector<vector<int>> &A, const vector<vector<int>> &B,
-//             vector<vector<int>> &C, int row) {
-//     for (size_t j = 0; j < A[0].size(); ++j)
+// const int ROWS = 3;
+// const int COLS = 3;
+
+// int A[ROWS][COLS] = { {1, 2, 3},
+//                       {4, 5, 6},
+//                       {7, 8, 9} };
+
+// int B[ROWS][COLS] = { {9, 8, 7},
+//                       {6, 5, 4},
+//                       {3, 2, 1} };
+
+// int C[ROWS][COLS];
+
+// void* addRow(void* arg) {
+//     int row = *(int*)arg;
+//     for (int j = 0; j < COLS; j++) {
 //         C[row][j] = A[row][j] + B[row][j];
+//     }
+//     pthread_exit(NULL);
 // }
 
 // int main() {
-//     int rows = 3, cols = 3;
-//     vector<vector<int>> A = { {1,2,3}, {4,5,6}, {7,8,9} };
-//     vector<vector<int>> B = { {9,8,7}, {6,5,4}, {3,2,1} };
-//     vector<vector<int>> C(rows, vector<int>(cols, 0));
+//     pthread_t threads[ROWS];
+//     int rowIndices[ROWS];
 
-//     vector<thread> threads;
-//     for (int i = 0; i < rows; i++){
-//         threads.emplace_back(addRow, cref(A), cref(B), ref(C), i);
+//     for (int i = 0; i < ROWS; i++) {
+//         rowIndices[i] = i;
+//         pthread_create(&threads[i], NULL, addRow, (void*)&rowIndices[i]);
 //     }
-//     for(auto &t : threads)
-//         t.join();
+//     for (int i = 0; i < ROWS; i++) {
+//         pthread_join(threads[i], NULL);
+//     }
 
-//     cout << "Matrix Addition Result:\n";
-//     for(auto &row: C){
-//         for(auto val: row)
-//             cout << val << " ";
-//         cout << "\n";
+//     cout << "Matrix Addition Result:" << endl;
+//     for (int i = 0; i < ROWS; i++) {
+//         for (int j = 0; j < COLS; j++) {
+//             cout << C[i][j] << " ";
+//         }
+//         cout << endl;
 //     }
 //     return 0;
 // }
 
-
 // 2. Matrix Multiplication
 
 // #include <iostream>
-// #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// void multiplyRow(const vector<vector<int>> &A, const vector<vector<int>> &B,
-//                    vector<vector<int>> &C, int row) {
-//     int cols = B[0].size();
-//     int inner = B.size();
-//     for (int j = 0; j < cols; j++) {
+// const int ROWS_A = 3, COLS_A = 3, COLS_B = 3;
+
+// int A[ROWS_A][COLS_A] = { {1, 2, 3},
+//                           {4, 5, 6},
+//                           {7, 8, 9} };
+
+// int B[COLS_A][COLS_B] = { {9, 8, 7},
+//                           {6, 5, 4},
+//                           {3, 2, 1} };
+
+// int C[ROWS_A][COLS_B];
+
+// void* multiplyRow(void* arg) {
+//     int row = *(int*)arg;
+//     for (int j = 0; j < COLS_B; j++) {
 //         C[row][j] = 0;
-//         for (int k = 0; k < inner; k++) {
+//         for (int k = 0; k < COLS_A; k++) {
 //             C[row][j] += A[row][k] * B[k][j];
 //         }
 //     }
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     vector<vector<int>> A = { {1,2,3},
-//                               {4,5,6},
-//                               {7,8,9} };
+// int main() {
+//     pthread_t threads[ROWS_A];
+//     int rowIndices[ROWS_A];
 
-//     vector<vector<int>> B = { {9,8,7},
-//                               {6,5,4},
-//                               {3,2,1} };
-
-//     int rows = A.size();
-//     int cols = B[0].size();
-//     vector<vector<int>> C(rows, vector<int>(cols, 0));
-
-//     vector<thread> threads;
-//     for (int i = 0; i < rows; i++){
-//         threads.emplace_back(multiplyRow, cref(A), cref(B), ref(C), i);
+//     for (int i = 0; i < ROWS_A; i++) {
+//         rowIndices[i] = i;
+//         pthread_create(&threads[i], NULL, multiplyRow, (void*)&rowIndices[i]);
 //     }
-//     for(auto &t : threads)
-//         t.join();
+//     for (int i = 0; i < ROWS_A; i++) {
+//         pthread_join(threads[i], NULL);
+//     }
 
-//     cout << "Matrix Multiplication Result:\n";
-//     for(auto &row: C){
-//         for(auto val: row)
-//             cout << val << " ";
-//         cout << "\n";
+//     cout << "Matrix Multiplication Result:" << endl;
+//     for (int i = 0; i < ROWS_A; i++) {
+//         for (int j = 0; j < COLS_B; j++) {
+//             cout << C[i][j] << " ";
+//         }
+//         cout << endl;
 //     }
 //     return 0;
 // }
@@ -85,168 +101,174 @@
 // 3. Matrix Transpose
 
 // #include <iostream>
-// #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// void transposeRow(const vector<vector<int>> &A, vector<vector<int>> &B, int row) {
-//     for (size_t j = 0; j < A[0].size(); j++) {
-//         B[j][row] = A[row][j];
+// const int ROWS = 3, COLS = 3;
+
+// int A[ROWS][COLS] = { {1, 2, 3},
+//                       {4, 5, 6},
+//                       {7, 8, 9} };
+
+// int T[COLS][ROWS];  // Transposed matrix
+
+// void* transposeRow(void* arg) {
+//     int row = *(int*)arg;
+//     for (int j = 0; j < COLS; j++) {
+//         T[j][row] = A[row][j];
 //     }
-// }
-
-// int main(){
-//     vector<vector<int>> A = { {1,2,3},
-//                               {4,5,6} };
-
-//     int rows = A.size(), cols = A[0].size();
-//     // Transposed matrix dimensions: cols x rows.
-//     vector<vector<int>> B(cols, vector<int>(rows, 0));
-
-//     vector<thread> threads;
-//     for (int i = 0; i < rows; i++){
-//         threads.emplace_back(transposeRow, cref(A), ref(B), i);
-//     }
-//     for(auto &t : threads)
-//         t.join();
-
-//     cout << "Matrix Transpose Result:\n";
-//     for(auto &row: B){
-//         for(auto val: row)
-//             cout << val << " ";
-//         cout << "\n";
-//     }
-//     return 0;
-// }
-
-// 4. Determinant Calculation (3x3 Matrix)
-
-// #include <iostream>
-// #include <vector>
-// #include <thread>
-// #include <cmath>
-// using namespace std;
-
-// double det2x2(const vector<vector<double>> &M) {
-//     return M[0][0]*M[1][1] - M[0][1]*M[1][0];
-// }
-
-// void cofactorTerm(const vector<vector<double>> &A, int j, double &result) {
-//     vector<vector<double>> minor(2, vector<double>(2));
-//     int m_row = 0;
-//     for (int i = 1; i < 3; ++i) {
-//         int m_col = 0;
-//         for (int k = 0; k < 3; ++k) {
-//             if(k == j) continue;
-//             minor[m_row][m_col++] = A[i][k];
-//         }
-//         m_row++;
-//     }
-//     result = pow(-1, j) * A[0][j] * det2x2(minor);
+//     pthread_exit(NULL);
 // }
 
 // int main() {
-//     vector<vector<double>> A = {
-//         {1, 2, 3},
-//         {0, 4, 5},
-//         {1, 0, 6}
-//     };
-//     double partial[3] = {0, 0, 0};
-//     thread t[3];
-//     for (int j = 0; j < 3; j++){
-//         t[j] = thread(cofactorTerm, cref(A), j, ref(partial[j]));
+//     pthread_t threads[ROWS];
+//     int rowIndices[ROWS];
+
+//     for (int i = 0; i < ROWS; i++) {
+//         rowIndices[i] = i;
+//         pthread_create(&threads[i], NULL, transposeRow, (void*)&rowIndices[i]);
 //     }
-//     for (int j = 0; j < 3; j++){
-//         t[j].join();
+//     for (int i = 0; i < ROWS; i++) {
+//         pthread_join(threads[i], NULL);
 //     }
-//     double determinant = partial[0] + partial[1] + partial[2];
-//     cout << "Determinant: " << determinant << "\n";
+
+//     cout << "Matrix Transpose:" << endl;
+//     for (int i = 0; i < COLS; i++) {
+//         for (int j = 0; j < ROWS; j++) {
+//             cout << T[i][j] << " ";
+//         }
+//         cout << endl;
+//     }
 //     return 0;
 // }
 
-// 5. Matrix Inversion (3x3 Matrix)
+// 4. Determinant Calculation (3×3)
 
 // #include <iostream>
-// #include <vector>
-// #include <thread>
-// #include <cmath>
+// #include <pthread.h>
 // using namespace std;
 
-// double det2x2(const vector<vector<double>> &M) {
-//     return M[0][0]*M[1][1] - M[0][1]*M[1][0];
+// const int SIZE = 3;
+// double M[SIZE][SIZE] = { {1, 2, 3},
+//                          {4, 5, 6},
+//                          {7, 8, 9} };
+// double terms[3] = {0};
+
+// struct ThreadData {
+//     int index;
+// };
+
+// void* computeTerm(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int i = data->index;
+//     double term = 0;
+//     if (i == 0) {
+//         term = M[0][0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1]);
+//     } else if (i == 1) {
+//         term = -M[0][1] * (M[1][0] * M[2][2] - M[1][2] * M[2][0]);
+//     } else if (i == 2) {
+//         term = M[0][2] * (M[1][0] * M[2][1] - M[1][1] * M[2][0]);
+//     }
+//     terms[i] = term;
+//     pthread_exit(NULL);
 // }
 
-// void computeCofactor(const vector<vector<double>> &A, int i, int j, double &cofactor) {
-//     vector<vector<double>> minor;
-//     for(int r = 0; r < 3; r++){
-//         if(r == i) continue;
-//         vector<double> row;
-//         for(int c = 0; c < 3; c++){
-//             if(c == j) continue;
-//             row.push_back(A[r][c]);
-//         }
-//         minor.push_back(row);
+// int main() {
+//     pthread_t threads[3];
+//     ThreadData tdata[3];
+
+//     for (int i = 0; i < 3; i++) {
+//         tdata[i].index = i;
+//         pthread_create(&threads[i], NULL, computeTerm, (void*)&tdata[i]);
 //     }
-//     cofactor = pow(-1, i+j) * det2x2(minor);
+//     for (int i = 0; i < 3; i++) {
+//         pthread_join(threads[i], NULL);
+//     }
+//     double det = terms[0] + terms[1] + terms[2];
+//     cout << "Determinant: " << det << endl;
+//     return 0;
 // }
 
-// double determinant(const vector<vector<double>> &A) {
-//     double det = 0;
-//     for (int j = 0; j < 3; j++){
-//         vector<vector<double>> minor;
-//         for (int r = 1; r < 3; r++){
-//             vector<double> row;
-//             for (int c = 0; c < 3; c++){
-//                 if(c == j) continue;
-//                 row.push_back(A[r][c]);
-//             }
-//             minor.push_back(row);
+// 5. Matrix Inversion (3×3)
+
+// #include <iostream>
+// #include <pthread.h>
+// using namespace std;
+
+// const int SIZE = 3;
+// double M[SIZE][SIZE] = { {4, 7, 2},
+//                          {3, 6, 1},
+//                          {2, 5, 3} };
+
+// double inv[SIZE][SIZE];
+// double cofactors[SIZE][SIZE];
+
+// struct CofactorData {
+//     int row, col;
+// };
+
+// double computeMinor(int r, int c) {
+//     double minor[2][2];
+//     int m_row = 0;
+//     for (int i = 0; i < SIZE; i++) {
+//         if (i == r) continue;
+//         int m_col = 0;
+//         for (int j = 0; j < SIZE; j++) {
+//             if (j == c) continue;
+//             minor[m_row][m_col] = M[i][j];
+//             m_col++;
 //         }
-//         det += pow(-1, j) * A[0][j] * det2x2(minor);
+//         m_row++;
 //     }
-//     return det;
+//     return minor[0][0] * minor[1][1] - minor[0][1] * minor[1][0];
 // }
 
-// int main(){
-//     vector<vector<double>> A = {
-//         {4, 7, 2},
-//         {3, 6, 1},
-//         {2, 5, 1}
-//     };
-//     double det = determinant(A);
-//     if(det == 0) {
-//         cout << "Matrix is singular, cannot invert.\n";
-//         return 0;
-//     }
-//     vector<vector<double>> cofactors(3, vector<double>(3, 0));
-//     vector<thread> threads;
-//     for (int i = 0; i < 3; i++){
-//         for(int j = 0; j < 3; j++){
-//             threads.emplace_back(computeCofactor, cref(A), i, j, ref(cofactors[i][j]));
+// void* computeCofactor(void* arg) {
+//     CofactorData* data = (CofactorData*) arg;
+//     int r = data->row, c = data->col;
+//     double minor = computeMinor(r, c);
+//     double cofactor = ((r + c) % 2 == 0) ? minor : -minor;
+//     cofactors[r][c] = cofactor;
+//     pthread_exit(NULL);
+// }
+
+// int main() {
+//     pthread_t threads[SIZE * SIZE];
+//     CofactorData tdata[SIZE * SIZE];
+//     int threadCount = 0;
+
+//     // Create 9 threads to compute each cofactor
+//     for (int i = 0; i < SIZE; i++) {
+//         for (int j = 0; j < SIZE; j++) {
+//             tdata[threadCount].row = i;
+//             tdata[threadCount].col = j;
+//             pthread_create(&threads[threadCount], NULL, computeCofactor, (void*)&tdata[threadCount]);
+//             threadCount++;
 //         }
 //     }
-//     for(auto &t: threads) {
-//         t.join();
+//     for (int i = 0; i < threadCount; i++) {
+//         pthread_join(threads[i], NULL);
 //     }
-//     // Transpose the cofactor matrix to get the adjugate.
-//     vector<vector<double>> adj(3, vector<double>(3, 0));
-//     for(int i = 0; i < 3; i++){
-//         for(int j = 0; j < 3; j++){
-//             adj[i][j] = cofactors[j][i];
+//     // Compute determinant using the cofactors of the first row
+//     double det = M[0][0] * cofactors[0][0] +
+//                  M[0][1] * cofactors[0][1] +
+//                  M[0][2] * cofactors[0][2];
+//     if (det == 0) {
+//         cout << "Matrix is singular, cannot invert." << endl;
+//         return 1;
+//     }
+//     // Calculate the inverse as the transpose of the cofactor matrix divided by determinant
+//     for (int i = 0; i < SIZE; i++) {
+//         for (int j = 0; j < SIZE; j++) {
+//             inv[j][i] = cofactors[i][j] / det;
 //         }
 //     }
-//     // Inverse = adjugate / determinant.
-//     vector<vector<double>> inv(3, vector<double>(3, 0));
-//     for (int i = 0; i < 3; i++){
-//         for(int j = 0; j < 3; j++){
-//             inv[i][j] = adj[i][j] / det;
+//     cout << "Inverse Matrix:" << endl;
+//     for (int i = 0; i < SIZE; i++) {
+//         for (int j = 0; j < SIZE; j++) {
+//             cout << inv[i][j] << " ";
 //         }
-//     }
-//     cout << "Inverse Matrix:\n";
-//     for(auto &row: inv){
-//         for(auto val: row)
-//             cout << val << " ";
-//         cout << "\n";
+//         cout << endl;
 //     }
 //     return 0;
 // }
@@ -255,32 +277,44 @@
 // 6. Row-wise Sum with Threads
 
 // #include <iostream>
-// #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// void sumRow(const vector<int> &row, int &sum) {
-//     sum = 0;
-//     for(auto val: row)
-//         sum += val;
+// const int ROWS = 4;
+// const int COLS = 3;
+
+// int matrix[ROWS][COLS] = { {1,  2,  3},
+//                            {4,  5,  6},
+//                            {7,  8,  9},
+//                            {10, 11, 12} };
+
+// int rowSums[ROWS];
+
+// void* rowSum(void* arg) {
+//     int row = *(int*)arg;
+//     int sum = 0;
+//     for (int j = 0; j < COLS; j++) {
+//         sum += matrix[row][j];
+//     }
+//     rowSums[row] = sum;
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     vector<vector<int>> matrix = {
-//         {1,2,3},
-//         {4,5,6},
-//         {7,8,9}
-//     };
-//     vector<int> rowSums(matrix.size(), 0);
-//     vector<thread> threads;
-//     for (size_t i = 0; i < matrix.size(); i++){
-//         threads.emplace_back(sumRow, cref(matrix[i]), ref(rowSums[i]));
-//     }
-//     for(auto &t : threads)
-//         t.join();
+// int main() {
+//     pthread_t threads[ROWS];
+//     int rowIndices[ROWS];
 
-//     for (size_t i = 0; i < rowSums.size(); i++){
-//         cout << "Sum of row " << i << ": " << rowSums[i] << "\n";
+//     for (int i = 0; i < ROWS; i++) {
+//         rowIndices[i] = i;
+//         pthread_create(&threads[i], NULL, rowSum, (void*)&rowIndices[i]);
+//     }
+//     for (int i = 0; i < ROWS; i++) {
+//         pthread_join(threads[i], NULL);
+//     }
+
+//     cout << "Row-wise Sums:" << endl;
+//     for (int i = 0; i < ROWS; i++) {
+//         cout << "Row " << i << ": " << rowSums[i] << endl;
 //     }
 //     return 0;
 // }
@@ -288,78 +322,90 @@
 // 7. Column-wise Mean Calculation
 
 // #include <iostream>
-// #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// void computeColumnMean(const vector<vector<int>> &matrix, int col, double &mean) {
+// const int ROWS = 4;
+// const int COLS = 3;
+
+// int matrix[ROWS][COLS] = { {1,  2,  3},
+//                            {4,  5,  6},
+//                            {7,  8,  9},
+//                            {10, 11, 12} };
+
+// double colMeans[COLS];
+
+// void* columnMean(void* arg) {
+//     int col = *(int*)arg;
 //     int sum = 0;
-//     int rows = matrix.size();
-//     for (int i = 0; i < rows; i++){
+//     for (int i = 0; i < ROWS; i++) {
 //         sum += matrix[i][col];
 //     }
-//     mean = static_cast<double>(sum) / rows;
+//     colMeans[col] = sum / static_cast<double>(ROWS);
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     vector<vector<int>> matrix = {
-//         {1,2,3},
-//         {4,5,6},
-//         {7,8,9}
-//     };
-//     int cols = matrix[0].size();
-//     vector<double> colMeans(cols, 0.0);
-//     vector<thread> threads;
-//     for (int j = 0; j < cols; j++){
-//         threads.emplace_back(computeColumnMean, cref(matrix), j, ref(colMeans[j]));
-//     }
-//     for(auto &t : threads)
-//         t.join();
+// int main() {
+//     pthread_t threads[COLS];
+//     int colIndices[COLS];
 
-//     for (int j = 0; j < cols; j++){
-//         cout << "Mean of column " << j << ": " << colMeans[j] << "\n";
+//     for (int j = 0; j < COLS; j++) {
+//         colIndices[j] = j;
+//         pthread_create(&threads[j], NULL, columnMean, (void*)&colIndices[j]);
+//     }
+//     for (int j = 0; j < COLS; j++) {
+//         pthread_join(threads[j], NULL);
+//     }
+
+//     cout << "Column-wise Means:" << endl;
+//     for (int j = 0; j < COLS; j++) {
+//         cout << "Column " << j << ": " << colMeans[j] << endl;
 //     }
 //     return 0;
 // }
 
-
 // 8. Parallel Matrix Scalar Multiplication
 
 // #include <iostream>
-// #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// void scalarMultiplyRow(const vector<vector<int>> &matrix, vector<vector<int>> &result,
-//                          int row, int scalar) {
-//     for(size_t j = 0; j < matrix[0].size(); j++){
+// const int ROWS = 3;
+// const int COLS = 3;
+
+// int matrix[ROWS][COLS] = { {1, 2, 3},
+//                            {4, 5, 6},
+//                            {7, 8, 9} };
+
+// int result[ROWS][COLS];
+// int scalar = 5;
+
+// void* scalarMultiply(void* arg) {
+//     int row = *(int*)arg;
+//     for (int j = 0; j < COLS; j++) {
 //         result[row][j] = matrix[row][j] * scalar;
 //     }
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     int scalar = 3;
-//     vector<vector<int>> matrix = {
-//         {1,2,3},
-//         {4,5,6},
-//         {7,8,9}
-//     };
-//     int rows = matrix.size();
-//     int cols = matrix[0].size();
-//     vector<vector<int>> result(rows, vector<int>(cols, 0));
+// int main() {
+//     pthread_t threads[ROWS];
+//     int rowIndices[ROWS];
 
-//     vector<thread> threads;
-//     for (int i = 0; i < rows; i++){
-//         threads.emplace_back(scalarMultiplyRow, cref(matrix), ref(result), i, scalar);
+//     for (int i = 0; i < ROWS; i++) {
+//         rowIndices[i] = i;
+//         pthread_create(&threads[i], NULL, scalarMultiply, (void*)&rowIndices[i]);
 //     }
-//     for(auto &t: threads)
-//         t.join();
+//     for (int i = 0; i < ROWS; i++) {
+//         pthread_join(threads[i], NULL);
+//     }
 
-//     cout << "Result of Scalar Multiplication:\n";
-//     for(auto &row : result){
-//         for(auto val : row)
-//             cout << val << " ";
-//         cout << "\n";
+//     cout << "Result of Scalar Multiplication:" << endl;
+//     for (int i = 0; i < ROWS; i++) {
+//         for (int j = 0; j < COLS; j++) {
+//             cout << result[i][j] << " ";
+//         }
+//         cout << endl;
 //     }
 //     return 0;
 // }
@@ -367,35 +413,48 @@
 // 9. Matrix Subtraction
 
 // #include <iostream>
-// #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// void subtractRow(const vector<vector<int>> &A, const vector<vector<int>> &B,
-//                  vector<vector<int>> &C, int row) {
-//     for (size_t j = 0; j < A[0].size(); j++){
+// const int ROWS = 3;
+// const int COLS = 3;
+
+// int A[ROWS][COLS] = { {9, 8, 7},
+//                       {6, 5, 4},
+//                       {3, 2, 1} };
+
+// int B[ROWS][COLS] = { {1, 2, 3},
+//                       {4, 5, 6},
+//                       {7, 8, 9} };
+
+// int C[ROWS][COLS];
+
+// void* subtractRow(void* arg) {
+//     int row = *(int*)arg;
+//     for (int j = 0; j < COLS; j++) {
 //         C[row][j] = A[row][j] - B[row][j];
 //     }
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     vector<vector<int>> A = { {9,8,7}, {6,5,4}, {3,2,1} };
-//     vector<vector<int>> B = { {1,2,3}, {4,5,6}, {7,8,9} };
-//     int rows = A.size(), cols = A[0].size();
-//     vector<vector<int>> C(rows, vector<int>(cols, 0));
+// int main() {
+//     pthread_t threads[ROWS];
+//     int rowIndices[ROWS];
 
-//     vector<thread> threads;
-//     for(int i = 0; i < rows; i++){
-//         threads.emplace_back(subtractRow, cref(A), cref(B), ref(C), i);
+//     for (int i = 0; i < ROWS; i++) {
+//         rowIndices[i] = i;
+//         pthread_create(&threads[i], NULL, subtractRow, (void*)&rowIndices[i]);
 //     }
-//     for(auto &t: threads)
-//         t.join();
+//     for (int i = 0; i < ROWS; i++) {
+//         pthread_join(threads[i], NULL);
+//     }
 
-//     cout << "Matrix Subtraction Result:\n";
-//     for(auto &row : C){
-//         for(auto val : row)
-//             cout << val << " ";
-//         cout << "\n";
+//     cout << "Matrix Subtraction Result:" << endl;
+//     for (int i = 0; i < ROWS; i++) {
+//         for (int j = 0; j < COLS; j++) {
+//             cout << C[i][j] << " ";
+//         }
+//         cout << endl;
 //     }
 //     return 0;
 // }
@@ -404,62 +463,74 @@
 // 10. Combining Operations
 
 // #include <iostream>
-// #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// void addRow(const vector<vector<int>> &A, const vector<vector<int>> &B,
-//             vector<vector<int>> &Sum, int row) {
-//     for (size_t j = 0; j < A[0].size(); j++){
-//         Sum[row][j] = A[row][j] + B[row][j];
+// const int ROWS = 3;
+// const int COLS = 3;
+
+// int A[ROWS][COLS] = { {1, 2, 3},
+//                       {4, 5, 6},
+//                       {7, 8, 9} };
+
+// int B[ROWS][COLS] = { {9, 8, 7},
+//                       {6, 5, 4},
+//                       {3, 2, 1} };
+
+// int C[ROWS][COLS]; // Result of A+B
+
+// int D[ROWS][COLS] = { {1, 0, 1},
+//                       {0, 1, 0},
+//                       {1, 0, 1} }; // Third matrix
+
+// int result[ROWS][COLS];
+
+// void* addRow(void* arg) {
+//     int row = *(int*)arg;
+//     for (int j = 0; j < COLS; j++) {
+//         C[row][j] = A[row][j] + B[row][j];
 //     }
+//     pthread_exit(NULL);
 // }
 
-// void multiplyRow(const vector<vector<int>> &M, const vector<vector<int>> &C,
-//                    vector<vector<int>> &Result, int row) {
-//     int cols = C[0].size();
-//     int inner = C.size();
-//     for(int j = 0; j < cols; j++){
-//         Result[row][j] = 0;
-//         for(int k = 0; k < inner; k++){
-//             Result[row][j] += M[row][k] * C[k][j];
+// void* multiplyRow(void* arg) {
+//     int row = *(int*)arg;
+//     for (int j = 0; j < COLS; j++) {
+//         result[row][j] = 0;
+//         for (int k = 0; k < COLS; k++) {
+//             result[row][j] += C[row][k] * D[k][j];
 //         }
 //     }
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     vector<vector<int>> A = { {1,2}, {3,4} };
-//     vector<vector<int>> B = { {5,6}, {7,8} };
-//     vector<vector<int>> C = { {1,0}, {0,1} }; // Using the identity matrix for simplicity.
+// int main() {
+//     pthread_t threadsAdd[ROWS], threadsMul[ROWS];
+//     int rowIndices[ROWS];
 
-//     int rows = A.size();
-//     int cols = A[0].size();
-//     vector<vector<int>> Sum(rows, vector<int>(cols, 0));
-
-//     // Matrix addition using threads.
-//     vector<thread> threads;
-//     for (int i = 0; i < rows; i++){
-//         threads.emplace_back(addRow, cref(A), cref(B), ref(Sum), i);
+//     // Addition phase (A + B)
+//     for (int i = 0; i < ROWS; i++) {
+//         rowIndices[i] = i;
+//         pthread_create(&threadsAdd[i], NULL, addRow, (void*)&rowIndices[i]);
 //     }
-//     for(auto &t : threads)
-//         t.join();
-
-//     // Matrix multiplication: (A+B) * C.
-//     int resultRows = Sum.size();
-//     int resultCols = C[0].size();
-//     vector<vector<int>> Result(resultRows, vector<int>(resultCols, 0));
-//     threads.clear();
-//     for (int i = 0; i < resultRows; i++){
-//         threads.emplace_back(multiplyRow, cref(Sum), cref(C), ref(Result), i);
+//     for (int i = 0; i < ROWS; i++) {
+//         pthread_join(threadsAdd[i], NULL);
 //     }
-//     for(auto &t : threads)
-//         t.join();
 
-//     cout << "Result of (A+B)*C:\n";
-//     for(auto &row: Result){
-//         for(auto val : row)
-//             cout << val << " ";
-//         cout << "\n";
+//     // Multiplication phase ((A+B) * D)
+//     for (int i = 0; i < ROWS; i++) {
+//         pthread_create(&threadsMul[i], NULL, multiplyRow, (void*)&rowIndices[i]);
+//     }
+//     for (int i = 0; i < ROWS; i++) {
+//         pthread_join(threadsMul[i], NULL);
+//     }
+
+//     cout << "Result of Combining Operations (A+B)*D:" << endl;
+//     for (int i = 0; i < ROWS; i++) {
+//         for (int j = 0; j < COLS; j++) {
+//             cout << result[i][j] << " ";
+//         }
+//         cout << endl;
 //     }
 //     return 0;
 // }
@@ -470,72 +541,87 @@
 // #include <iostream>
 // #include <fstream>
 // #include <vector>
-// #include <sstream>
-// #include <thread>
 // #include <cmath>
-// #include <mutex>
+// #include <pthread.h>
 // #include <algorithm>
 // using namespace std;
 
-// struct RowDistance {
-//     int index;
-//     double distance;
+// struct ThreadData {
+//     int rowIndex;
 // };
 
-// void computeDistance(const vector<double>& target, const vector<double>& row, int idx, double &dist) {
-//     double sum = 0;
-//     for (size_t i = 0; i < target.size(); ++i)
-//         sum += (row[i] - target[i]) * (row[i] - target[i]);
-//     dist = sqrt(sum);
+// vector<vector<double>> matrix;
+// vector<double> target;
+// vector<double> distances;
+// int numRows, numCols;
+
+// void* computeDistance(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int row = data->rowIndex;
+//     double sum = 0.0;
+//     for (int j = 0; j < numCols; j++) {
+//         double diff = matrix[row][j] - target[j];
+//         sum += diff * diff;
+//     }
+//     distances[row] = sqrt(sum);
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     ifstream matrixFile("matrix.txt");
-//     ifstream targetFile("target.txt");
-//     if (!matrixFile || !targetFile) {
-//         cerr << "Error opening files.\n";
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt" << endl;
 //         return 1;
 //     }
-
-//     int m, n;
-//     matrixFile >> m >> n;
-//     vector<vector<double>> matrix(m, vector<double>(n));
-//     for (int i = 0; i < m; ++i)
-//         for (int j = 0; j < n; ++j)
-//             matrixFile >> matrix[i][j];
-
-//     int tsize;
-//     targetFile >> tsize;
-//     if(tsize != n){
-//         cerr << "Target vector size does not match matrix columns.\n";
+//     fin >> numRows >> numCols;
+//     matrix.resize(numRows, vector<double>(numCols));
+//     distances.resize(numRows, 0.0);
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             fin >> matrix[i][j];
+//     fin.close();
+    
+//     ifstream ftarget("target.txt");
+//     if (!ftarget) {
+//         cerr << "Error opening target.txt" << endl;
 //         return 1;
 //     }
-//     vector<double> target(tsize);
-//     for (int i = 0; i < tsize; ++i)
-//         target[i] = 0, targetFile >> target[i];
-
-//     vector<double> distances(m);
-//     vector<thread> threads;
-//     for (int i = 0; i < m; ++i) {
-//         threads.emplace_back(computeDistance, cref(target), cref(matrix[i]), i, ref(distances[i]));
+//     int targetSize;
+//     ftarget >> targetSize;
+//     if (targetSize != numCols) {
+//         cerr << "Target vector size does not match matrix column count." << endl;
+//         return 1;
 //     }
-//     for(auto &t: threads)
-//         t.join();
-
-//     vector<RowDistance> rd;
-//     for (int i = 0; i < m; i++){
-//         rd.push_back({i, distances[i]});
+//     target.resize(targetSize);
+//     for (int j = 0; j < targetSize; j++)
+//         ftarget >> target[j];
+//     ftarget.close();
+    
+//     vector<pthread_t> threads(numRows);
+//     vector<ThreadData> threadData(numRows);
+//     for (int i = 0; i < numRows; i++) {
+//         threadData[i].rowIndex = i;
+//         pthread_create(&threads[i], NULL, computeDistance, (void*)&threadData[i]);
 //     }
-//     sort(rd.begin(), rd.end(), [](const RowDistance &a, const RowDistance &b) {
-//         return a.distance < b.distance;
+//     for (int i = 0; i < numRows; i++)
+//         pthread_join(threads[i], NULL);
+    
+//     // Sort row indices based on computed distance
+//     vector<int> indices(numRows);
+//     for (int i = 0; i < numRows; i++)
+//         indices[i] = i;
+//     sort(indices.begin(), indices.end(), [](int a, int b) {
+//         return distances[a] < distances[b];
 //     });
-
-//     cout << "Four nearest rows to the target:\n";
-//     for (int i = 0; i < 4 && i < (int)rd.size(); i++){
-//         cout << "Row " << rd[i].index << " (Distance: " << rd[i].distance << "): ";
-//         for (auto val : matrix[rd[i].index])
-//             cout << val << " ";
-//         cout << "\n";
+    
+//     int numClosest = min(4, numRows);
+//     cout << "The " << numClosest << " nearest rows to the target vector are:" << endl;
+//     for (int i = 0; i < numClosest; i++) {
+//         int idx = indices[i];
+//         cout << "Row " << idx << " (Distance: " << distances[idx] << "): ";
+//         for (int j = 0; j < numCols; j++)
+//             cout << matrix[idx][j] << " ";
+//         cout << endl;
 //     }
 //     return 0;
 // }
@@ -545,1113 +631,1291 @@
 // #include <iostream>
 // #include <fstream>
 // #include <vector>
-// #include <sstream>
-// #include <thread>
 // #include <cmath>
-// #include <mutex>
+// #include <pthread.h>
 // #include <algorithm>
 // using namespace std;
 
-// struct ColDistance {
-//     int index;
-//     double distance;
+// struct ThreadData {
+//     int colIndex;
 // };
 
-// void computeColDistance(const vector<double>& target, const vector<vector<double>> &matrix, int col, double &dist) {
-//     double sum = 0;
-//     int rows = matrix.size();
-//     for (int i = 0; i < rows; i++)
-//         sum += (matrix[i][col] - target[i]) * (matrix[i][col] - target[i]);
-//     dist = sqrt(sum);
+// vector<vector<double>> matrix;
+// vector<double> target;
+// vector<double> distances;
+// int numRows, numCols;
+
+// void* computeColumnDistance(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int col = data->colIndex;
+//     double sum = 0.0;
+//     for (int i = 0; i < numRows; i++) {
+//         double diff = matrix[i][col] - target[i];
+//         sum += diff * diff;
+//     }
+//     distances[col] = sqrt(sum);
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     ifstream matrixFile("matrix.txt");
-//     ifstream targetFile("target.txt");
-//     if (!matrixFile || !targetFile) {
-//         cerr << "Error opening files.\n";
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt" << endl;
 //         return 1;
 //     }
-
-//     int m, n;
-//     matrixFile >> m >> n;
-//     vector<vector<double>> matrix(m, vector<double>(n));
-//     for (int i = 0; i < m; ++i)
-//         for (int j = 0; j < n; ++j)
-//             matrixFile >> matrix[i][j];
-
-//     int tsize;
-//     targetFile >> tsize;
-//     if(tsize != m){
-//         cerr << "Target vector size does not match matrix rows.\n";
+//     fin >> numRows >> numCols;
+//     matrix.resize(numRows, vector<double>(numCols));
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             fin >> matrix[i][j];
+//     fin.close();
+    
+//     ifstream ftarget("target.txt");
+//     if (!ftarget) {
+//         cerr << "Error opening target.txt" << endl;
 //         return 1;
 //     }
-//     vector<double> target(tsize);
-//     for (int i = 0; i < tsize; ++i)
-//         target[i] = 0, targetFile >> target[i];
-
-//     vector<double> distances(n);
-//     vector<thread> threads;
-//     for (int j = 0; j < n; j++){
-//         threads.emplace_back(computeColDistance, cref(target), cref(matrix), j, ref(distances[j]));
+//     int targetSize;
+//     ftarget >> targetSize;
+//     if (targetSize != numRows) {
+//         cerr << "Target vector size does not match matrix row count." << endl;
+//         return 1;
 //     }
-//     for(auto &t : threads)
-//         t.join();
-
-//     vector<ColDistance> cd;
-//     for (int j = 0; j < n; j++){
-//         cd.push_back({j, distances[j]});
+//     target.resize(targetSize);
+//     for (int i = 0; i < targetSize; i++)
+//         ftarget >> target[i];
+//     ftarget.close();
+    
+//     distances.resize(numCols, 0.0);
+//     vector<pthread_t> threads(numCols);
+//     vector<ThreadData> threadData(numCols);
+//     for (int j = 0; j < numCols; j++) {
+//         threadData[j].colIndex = j;
+//         pthread_create(&threads[j], NULL, computeColumnDistance, (void*)&threadData[j]);
 //     }
-//     sort(cd.begin(), cd.end(), [](const ColDistance &a, const ColDistance &b) {
-//         return a.distance < b.distance;
+//     for (int j = 0; j < numCols; j++)
+//         pthread_join(threads[j], NULL);
+    
+//     vector<int> indices(numCols);
+//     for (int j = 0; j < numCols; j++)
+//         indices[j] = j;
+//     sort(indices.begin(), indices.end(), [](int a, int b) {
+//         return distances[a] < distances[b];
 //     });
-
-//     cout << "Four nearest columns to the target:\n";
-//     for (int i = 0; i < 4 && i < (int)cd.size(); i++){
-//         cout << "Column " << cd[i].index << " (Distance: " << cd[i].distance << "): ";
-//         for (int r = 0; r < m; r++)
-//             cout << matrix[r][cd[i].index] << " ";
-//         cout << "\n";
+    
+//     int numClosest = min(4, numCols);
+//     cout << "The " << numClosest << " nearest columns to the target vector are:" << endl;
+//     for (int i = 0; i < numClosest; i++) {
+//         int idx = indices[i];
+//         cout << "Column " << idx << " (Distance: " << distances[idx] << "): ";
+//         for (int row = 0; row < numRows; row++)
+//             cout << matrix[row][idx] << " ";
+//         cout << endl;
 //     }
 //     return 0;
 // }
+
 
 // 3. Dot Product Maximizer
 
 // #include <iostream>
 // #include <fstream>
 // #include <vector>
-// #include <sstream>
-// #include <thread>
-// #include <mutex>
+// #include <pthread.h>
 // #include <limits>
 // using namespace std;
 
-// void dotProductColumn(const vector<vector<double>> &matrix, const vector<double> &vec, int col, double &result) {
-//     int rows = matrix.size();
-//     result = 0;
-//     for (int i = 0; i < rows; i++){
-//         result += matrix[i][col] * vec[i];
-//     }
+// struct ThreadData {
+//     int colIndex;
+// };
+
+// vector<vector<double>> matrix;
+// vector<double> vec;
+// vector<double> dotProducts;
+// int numRows, numCols;
+
+// void* computeDotProduct(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int col = data->colIndex;
+//     double dot = 0.0;
+//     for (int i = 0; i < numRows; i++)
+//         dot += matrix[i][col] * vec[i];
+//     dotProducts[col] = dot;
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     ifstream matrixFile("matrix.txt");
-//     ifstream vectorFile("vector.txt");
-//     if (!matrixFile || !vectorFile) {
-//         cerr << "Error opening files.\n";
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt" << endl;
 //         return 1;
 //     }
+//     fin >> numRows >> numCols;
+//     matrix.resize(numRows, vector<double>(numCols));
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             fin >> matrix[i][j];
+//     fin.close();
     
-//     int m, n;
-//     matrixFile >> m >> n;
-//     vector<vector<double>> matrix(m, vector<double>(n));
-//     for (int i = 0; i < m; ++i)
-//         for (int j = 0; j < n; ++j)
-//             matrixFile >> matrix[i][j];
-
-//     int vsize;
-//     vectorFile >> vsize;
-//     if(vsize != m){
-//         cerr << "Vector size must equal number of matrix rows.\n";
+//     ifstream fvec("vector.txt");
+//     if (!fvec) {
+//         cerr << "Error opening vector.txt" << endl;
 //         return 1;
 //     }
-//     vector<double> vec(vsize);
-//     for (int i = 0; i < vsize; ++i)
-//         vectorFile >> vec[i];
-
-//     vector<double> dotProducts(n);
-//     vector<thread> threads;
-//     for (int j = 0; j < n; j++){
-//         threads.emplace_back(dotProductColumn, cref(matrix), cref(vec), j, ref(dotProducts[j]));
+//     int vecSize;
+//     fvec >> vecSize;
+//     if (vecSize != numRows) {
+//         cerr << "Vector size does not match number of rows in matrix." << endl;
+//         return 1;
 //     }
-//     for(auto &t : threads)
-//         t.join();
-
-//     int bestIndex = -1;
-//     double bestDot = -numeric_limits<double>::infinity();
-//     for (int j = 0; j < n; j++){
-//         if(dotProducts[j] > bestDot){
-//             bestDot = dotProducts[j];
-//             bestIndex = j;
+//     vec.resize(vecSize);
+//     for (int i = 0; i < vecSize; i++)
+//         fvec >> vec[i];
+//     fvec.close();
+    
+//     dotProducts.resize(numCols, 0.0);
+//     vector<pthread_t> threads(numCols);
+//     vector<ThreadData> threadData(numCols);
+//     for (int j = 0; j < numCols; j++) {
+//         threadData[j].colIndex = j;
+//         pthread_create(&threads[j], NULL, computeDotProduct, (void*)&threadData[j]);
+//     }
+//     for (int j = 0; j < numCols; j++)
+//         pthread_join(threads[j], NULL);
+    
+//     int maxIndex = 0;
+//     double maxDot = dotProducts[0];
+//     for (int j = 1; j < numCols; j++) {
+//         if (dotProducts[j] > maxDot) {
+//             maxDot = dotProducts[j];
+//             maxIndex = j;
 //         }
 //     }
-//     cout << "Column with maximum dot product: " << bestIndex << " (Dot Product = " << bestDot << ")\n";
+//     cout << "The column with the highest dot product is at index " << maxIndex 
+//          << " with a dot product of " << maxDot << endl;
 //     return 0;
 // }
-
 
 // 4. Batch Matrix Inversion
 
 // #include <iostream>
 // #include <fstream>
-// #include <sstream>
 // #include <vector>
-// #include <thread>
-// #include <mutex>
-// #include <cmath>
+// #include <pthread.h>
+// #include <iomanip>
 // using namespace std;
 
-// typedef vector<vector<double>> Matrix;
+// struct MatrixData {
+//     int index;
+//     int n;
+//     vector<vector<double>> mat;
+//     vector<vector<double>> inv;
+//     bool invertible;
+// };
 
-// double det2x2(const Matrix &M) {
-//     return M[0][0]*M[1][1] - M[0][1]*M[1][0];
+// vector<MatrixData> matrices;
+
+// void printMatrix(const vector<vector<double>>& m) {
+//     int n = m.size();
+//     for (int i = 0; i < n; i++) {
+//         for (int j = 0; j < n; j++)
+//             cout << m[i][j] << " ";
+//         cout << endl;
+//     }
 // }
 
-// double determinant(const Matrix &A) {
-//     // For 3x3 matrix
-//     double det = A[0][0]*(A[1][1]*A[2][2]-A[1][2]*A[2][1])
-//                - A[0][1]*(A[1][0]*A[2][2]-A[1][2]*A[2][0])
-//                + A[0][2]*(A[1][0]*A[2][1]-A[1][1]*A[2][0]);
-//     return det;
-// }
-
-// bool invertMatrix(const Matrix &A, Matrix &inv) {
-//     double det = determinant(A);
-//     if(det == 0) return false;
-//     inv = Matrix(3, vector<double>(3, 0));
-//     inv[0][0] =  (A[1][1]*A[2][2]-A[1][2]*A[2][1]) / det;
-//     inv[0][1] = -(A[0][1]*A[2][2]-A[0][2]*A[2][1]) / det;
-//     inv[0][2] =  (A[0][1]*A[1][2]-A[0][2]*A[1][1]) / det;
-//     inv[1][0] = -(A[1][0]*A[2][2]-A[1][2]*A[2][0]) / det;
-//     inv[1][1] =  (A[0][0]*A[2][2]-A[0][2]*A[2][0]) / det;
-//     inv[1][2] = -(A[0][0]*A[1][2]-A[0][2]*A[1][0]) / det;
-//     inv[2][0] =  (A[1][0]*A[2][1]-A[1][1]*A[2][0]) / det;
-//     inv[2][1] = -(A[0][0]*A[2][1]-A[0][1]*A[2][0]) / det;
-//     inv[2][2] =  (A[0][0]*A[1][1]-A[0][1]*A[1][0]) / det;
+// bool invertMatrix(const vector<vector<double>>& input, vector<vector<double>>& output) {
+//     int n = input.size();
+//     output = vector<vector<double>>(n, vector<double>(n, 0));
+//     vector<vector<double>> a = input;
+    
+//     // Initialize output as identity matrix
+//     for (int i = 0; i < n; i++)
+//         output[i][i] = 1;
+    
+//     for (int i = 0; i < n; i++) {
+//         double pivot = a[i][i];
+//         if (pivot == 0) {
+//             int swapRow = -1;
+//             for (int k = i+1; k < n; k++)
+//                 if (a[k][i] != 0) { swapRow = k; break; }
+//             if (swapRow == -1)
+//                 return false;
+//             swap(a[i], a[swapRow]);
+//             swap(output[i], output[swapRow]);
+//             pivot = a[i][i];
+//         }
+//         for (int j = 0; j < n; j++) {
+//             a[i][j] /= pivot;
+//             output[i][j] /= pivot;
+//         }
+//         for (int k = 0; k < n; k++) {
+//             if (k != i) {
+//                 double factor = a[k][i];
+//                 for (int j = 0; j < n; j++) {
+//                     a[k][j] -= factor * a[i][j];
+//                     output[k][j] -= factor * output[i][j];
+//                 }
+//             }
+//         }
+//     }
 //     return true;
 // }
 
-// void processMatrix(const Matrix &mat, int idx, vector<Matrix> &inverses, vector<int> &failures, mutex &m) {
-//     Matrix inv;
-//     if(invertMatrix(mat, inv)){
-//         lock_guard<mutex> lock(m);
-//         inverses[idx] = inv;
-//     } else {
-//         lock_guard<mutex> lock(m);
-//         failures.push_back(idx);
-//     }
+// void* invertMatrixThread(void* arg) {
+//     MatrixData* data = (MatrixData*) arg;
+//     data->invertible = invertMatrix(data->mat, data->inv);
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     ifstream file("matrices.txt");
-//     if(!file){
-//         cerr << "Cannot open matrices.txt\n";
+// int main() {
+//     ifstream fin("matrices.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrices.txt" << endl;
 //         return 1;
 //     }
-//     vector<Matrix> matrices;
-//     string line;
-//     Matrix current;
-//     while(getline(file, line)){
-//         if(line.empty()){
-//             if(!current.empty()){
-//                 matrices.push_back(current);
-//                 current.clear();
-//             }
+//     int numMatrices;
+//     fin >> numMatrices;
+//     matrices.resize(numMatrices);
+//     for (int m = 0; m < numMatrices; m++) {
+//         int n;
+//         fin >> n;
+//         matrices[m].index = m;
+//         matrices[m].n = n;
+//         matrices[m].mat.resize(n, vector<double>(n));
+//         for (int i = 0; i < n; i++)
+//             for (int j = 0; j < n; j++)
+//                 fin >> matrices[m].mat[i][j];
+//     }
+//     fin.close();
+    
+//     vector<pthread_t> threads(numMatrices);
+//     for (int m = 0; m < numMatrices; m++)
+//         pthread_create(&threads[m], NULL, invertMatrixThread, (void*)&matrices[m]);
+//     for (int m = 0; m < numMatrices; m++)
+//         pthread_join(threads[m], NULL);
+    
+//     for (int m = 0; m < numMatrices; m++) {
+//         cout << "Matrix " << m << ":" << endl;
+//         printMatrix(matrices[m].mat);
+//         if (matrices[m].invertible) {
+//             cout << "Inverse:" << endl;
+//             printMatrix(matrices[m].inv);
 //         } else {
-//             istringstream iss(line);
-//             vector<double> row;
-//             double num;
-//             while(iss >> num)
-//                 row.push_back(num);
-//             current.push_back(row);
+//             cout << "This matrix is not invertible." << endl;
 //         }
-//     }
-//     if(!current.empty())
-//         matrices.push_back(current);
-
-//     int count = matrices.size();
-//     vector<Matrix> inverses(count, Matrix());
-//     vector<int> failures;
-//     mutex m;
-//     vector<thread> threads;
-//     for (int i = 0; i < count; i++){
-//         // Assuming each matrix is 3x3.
-//         threads.emplace_back(processMatrix, cref(matrices[i]), i, ref(inverses), ref(failures), ref(m));
-//     }
-//     for(auto &t: threads)
-//         t.join();
-
-//     for (int i = 0; i < count; i++){
-//         cout << "Matrix " << i << " inverse:\n";
-//         if(inverses[i].empty()){
-//             cout << "  Not invertible.\n";
-//         } else {
-//             for(auto &row : inverses[i]){
-//                 for(auto val : row)
-//                     cout << val << " ";
-//                 cout << "\n";
-//             }
-//         }
-//     }
-//     if(!failures.empty()){
-//         cout << "Noninvertible matrices at indices: ";
-//         for (auto idx : failures)
-//             cout << idx << " ";
-//         cout << "\n";
+//         cout << "-------------------" << endl;
 //     }
 //     return 0;
 // }
-
 
 // 5. Global Sum Calculation
 
 // #include <iostream>
 // #include <fstream>
-// #include <sstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// void partialSum(const vector<vector<int>> &matrix, int start, int end, long long &sum) {
-//     long long localSum = 0;
-//     for (int i = start; i < end; i++){
-//         for (auto val : matrix[i])
-//             localSum += val;
-//     }
-//     sum = localSum;
+// struct ThreadData {
+//     int startRow;
+//     int endRow;
+//     long long sum;
+// };
+
+// vector<vector<int>> matrix;
+// int numRows, numCols;
+// int numThreads = 4;
+
+// void* sumSegment(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     data->sum = 0;
+//     for (int i = data->startRow; i < data->endRow; i++)
+//         for (int j = 0; j < numCols; j++)
+//             data->sum += matrix[i][j];
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     ifstream file("matrix.txt");
-//     if(!file){
-//         cerr << "Cannot open matrix.txt\n";
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt" << endl;
 //         return 1;
 //     }
-//     int m, n;
-//     file >> m >> n;
-//     vector<vector<int>> matrix(m, vector<int>(n));
-//     for (int i = 0; i < m; i++){
-//         for (int j = 0; j < n; j++){
-//             file >> matrix[i][j];
-//         }
+//     fin >> numRows >> numCols;
+//     matrix.resize(numRows, vector<int>(numCols));
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             fin >> matrix[i][j];
+//     fin.close();
+    
+//     vector<ThreadData> threadData(numThreads);
+//     vector<pthread_t> threads(numThreads);
+//     int rowsPerThread = numRows / numThreads;
+//     int extra = numRows % numThreads;
+//     int currentRow = 0;
+    
+//     for (int t = 0; t < numThreads; t++) {
+//         threadData[t].startRow = currentRow;
+//         threadData[t].endRow = currentRow + rowsPerThread + (t < extra ? 1 : 0);
+//         currentRow = threadData[t].endRow;
+//         pthread_create(&threads[t], NULL, sumSegment, (void*)&threadData[t]);
+//     }
+//     long long totalSum = 0;
+//     for (int t = 0; t < numThreads; t++) {
+//         pthread_join(threads[t], NULL);
+//         totalSum += threadData[t].sum;
 //     }
     
-//     int numThreads = 4;
-//     vector<thread> threads;
-//     vector<long long> sums(numThreads, 0);
-//     int rowsPerThread = m / numThreads;
-    
-//     for (int t = 0; t < numThreads; t++){
-//         int start = t * rowsPerThread;
-//         int end = (t == numThreads - 1) ? m : start + rowsPerThread;
-//         threads.emplace_back(partialSum, cref(matrix), start, end, ref(sums[t]));
-//     }
-//     for(auto &t: threads)
-//         t.join();
-
-//     long long total = 0;
-//     for (auto s : sums)
-//         total += s;
-//     cout << "Total sum of matrix elements: " << total << "\n";
+//     cout << "Total sum of matrix elements: " << totalSum << endl;
 //     return 0;
 // }
-
 
 // 6. Sliding Window Determinant
 
 // #include <iostream>
 // #include <fstream>
-// #include <sstream>
 // #include <vector>
-// #include <thread>
-// #include <mutex>
+// #include <pthread.h>
 // using namespace std;
 
-// double determinant3x3(const vector<vector<double>> &win) {
-//     return win[0][0]*(win[1][1]*win[2][2]-win[1][2]*win[2][1])
-//          - win[0][1]*(win[1][0]*win[2][2]-win[1][2]*win[2][0])
-//          + win[0][2]*(win[1][0]*win[2][1]-win[1][1]*win[2][0]);
-// }
+// int numRows, numCols;
+// int windowSize = 3;
+// vector<vector<double>> matrix;
 
-// void processWindows(const vector<vector<double>> &matrix, int startRow, int endRow, int windowSize, vector<pair<int, int>> &posDet, mutex &m) {
-//     int totalRows = matrix.size();
-//     int totalCols = matrix[0].size();
-//     for (int i = startRow; i <= endRow; i++){
-//         for (int j = 0; j <= totalCols - windowSize; j++){
-//             // Make sure window fits vertically.
-//             if(i + windowSize - 1 >= totalRows) break;
-//             vector<vector<double>> win(windowSize, vector<double>(windowSize));
-//             for (int a = 0; a < windowSize; a++){
-//                 for (int b = 0; b < windowSize; b++){
-//                     win[a][b] = matrix[i+a][j+b];
-//                 }
-//             }
-//             double det = determinant3x3(win);
-//             // For demonstration, we record positions with nonzero determinant.
-//             if(det != 0){
-//                 lock_guard<mutex> lock(m);
-//                 posDet.push_back({i, j});
+// struct Window {
+//     int startRow;
+//     int startCol;
+// };
+
+// vector<Window> windows;
+// vector<double> determinants; // one per window
+
+// struct ThreadData {
+//     int startIndex;
+//     int endIndex;
+// };
+
+// double computeDeterminant(const vector<vector<double>>& mat) {
+//     int n = mat.size();
+//     if (n == 1) return mat[0][0];
+//     if (n == 2) return mat[0][0]*mat[1][1] - mat[0][1]*mat[1][0];
+//     double det = 0.0;
+//     for (int p = 0; p < n; p++) {
+//         vector<vector<double>> submat(n-1, vector<double>(n-1));
+//         for (int i = 1; i < n; i++) {
+//             int colIndex = 0;
+//             for (int j = 0; j < n; j++) {
+//                 if (j == p) continue;
+//                 submat[i-1][colIndex] = mat[i][j];
+//                 colIndex++;
 //             }
 //         }
+//         det += (p % 2 == 0 ? 1 : -1) * mat[0][p] * computeDeterminant(submat);
 //     }
+//     return det;
 // }
 
-// int main(){
-//     ifstream file("matrix.txt");
-//     if(!file){
-//         cerr << "Cannot open matrix.txt\n";
+// void* slidingWindowDeterminant(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     for (int idx = data->startIndex; idx < data->endIndex; idx++) {
+//         int r = windows[idx].startRow;
+//         int c = windows[idx].startCol;
+//         vector<vector<double>> submatrix(windowSize, vector<double>(windowSize));
+//         for (int i = 0; i < windowSize; i++)
+//             for (int j = 0; j < windowSize; j++)
+//                 submatrix[i][j] = matrix[r+i][c+j];
+//         determinants[idx] = computeDeterminant(submatrix);
+//     }
+//     pthread_exit(NULL);
+// }
+
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt" << endl;
 //         return 1;
 //     }
-//     int m, n;
-//     file >> m >> n;
-//     vector<vector<double>> matrix(m, vector<double>(n));
-//     for (int i = 0; i < m; i++){
-//         for (int j = 0; j < n; j++){
-//             file >> matrix[i][j];
-//         }
-//     }
+//     fin >> numRows >> numCols;
+//     matrix.resize(numRows, vector<double>(numCols));
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             fin >> matrix[i][j];
+//     fin.close();
     
-//     int windowSize = 3;
+//     // Generate all valid sliding window positions.
+//     for (int i = 0; i <= numRows - windowSize; i++)
+//         for (int j = 0; j <= numCols - windowSize; j++)
+//             windows.push_back({i, j});
+//     int totalWindows = windows.size();
+//     determinants.resize(totalWindows, 0.0);
+    
 //     int numThreads = 4;
-//     vector<thread> threads;
-//     vector<pair<int,int>> results; // stores top-left coordinate of window with nonzero determinant
-//     mutex mtx;
-    
-//     int maxStartRow = m - windowSize;
-//     int rowsPerThread = (maxStartRow + 1) / numThreads;
-    
-//     for (int t = 0; t < numThreads; t++){
-//         int start = t * rowsPerThread;
-//         int end = (t == numThreads - 1) ? maxStartRow : start + rowsPerThread - 1;
-//         threads.emplace_back(processWindows, cref(matrix), start, end, windowSize, ref(results), ref(mtx));
+//     vector<pthread_t> threads(numThreads);
+//     vector<ThreadData> threadData(numThreads);
+//     int windowsPerThread = totalWindows / numThreads;
+//     int extra = totalWindows % numThreads;
+//     int currentIndex = 0;
+//     for (int t = 0; t < numThreads; t++) {
+//         threadData[t].startIndex = currentIndex;
+//         threadData[t].endIndex = currentIndex + windowsPerThread + (t < extra ? 1 : 0);
+//         currentIndex = threadData[t].endIndex;
+//         pthread_create(&threads[t], NULL, slidingWindowDeterminant, (void*)&threadData[t]);
 //     }
-//     for(auto &t : threads)
-//         t.join();
-
-//     cout << "Sliding window positions (top-left indices) with nonzero determinant:\n";
-//     for (auto &p : results)
-//         cout << "(" << p.first << ", " << p.second << ")\n";
+//     for (int t = 0; t < numThreads; t++)
+//         pthread_join(threads[t], NULL);
+    
+//     // Output the determinant for each window.
+//     for (int i = 0; i < totalWindows; i++) {
+//         cout << "Window starting at (" << windows[i].startRow << ", " 
+//              << windows[i].startCol << ") has determinant: " << determinants[i] << endl;
+//     }
 //     return 0;
 // }
-
 
 // 7. Self-Multiplication Check
 
 // #include <iostream>
 // #include <fstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
+// #include <cmath>
 // using namespace std;
 
-// void multiplyRowTranspose(const vector<vector<double>> &matrix, vector<vector<double>> &prod, int row) {
-//     int m = matrix.size();
-//     int n = matrix[0].size();
-//     for (int j = 0; j < m; j++){
-//         double sum = 0;
-//         for (int k = 0; k < n; k++){
-//             sum += matrix[row][k] * matrix[j][k];
-//         }
-//         prod[row][j] = sum;
+// vector<vector<double>> matrix;
+// vector<vector<double>> product;
+// int numRows, numCols;
+
+// struct ThreadData {
+//     int rowIndex;
+// };
+
+// void* computeProductRow(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int i = data->rowIndex;
+//     for (int j = 0; j < numRows; j++) {
+//         double sum = 0.0;
+//         for (int k = 0; k < numCols; k++)
+//             sum += matrix[i][k] * matrix[j][k]; // Note: (A * Aᵀ)[i][j]
+//         product[i][j] = sum;
 //     }
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     ifstream file("matrix.txt");
-//     if(!file){
-//         cerr << "Cannot open matrix.txt\n";
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt" << endl;
 //         return 1;
 //     }
-//     int m, n;
-//     file >> m >> n;
-//     vector<vector<double>> matrix(m, vector<double>(n));
-//     for (int i = 0; i < m; i++){
-//         for (int j = 0; j < n; j++){
-//             file >> matrix[i][j];
-//         }
+//     fin >> numRows >> numCols;
+//     matrix.resize(numRows, vector<double>(numCols));
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             fin >> matrix[i][j];
+//     fin.close();
+    
+//     product.resize(numRows, vector<double>(numRows, 0.0));
+//     vector<pthread_t> threads(numRows);
+//     vector<ThreadData> threadData(numRows);
+//     for (int i = 0; i < numRows; i++) {
+//         threadData[i].rowIndex = i;
+//         pthread_create(&threads[i], NULL, computeProductRow, (void*)&threadData[i]);
 //     }
-//     vector<vector<double>> prod(m, vector<double>(m, 0));
-//     vector<thread> threads;
-//     for (int i = 0; i < m; i++){
-//         threads.emplace_back(multiplyRowTranspose, cref(matrix), ref(prod), i);
-//     }
-//     for(auto &t : threads)
-//         t.join();
-
+//     for (int i = 0; i < numRows; i++)
+//         pthread_join(threads[i], NULL);
+    
+//     // Check symmetry of product matrix.
 //     bool symmetric = true;
-//     for (int i = 0; i < m && symmetric; i++){
-//         for (int j = 0; j < m; j++){
-//             if(prod[i][j] != prod[j][i]){
-//                 cout << "Discrepancy at (" << i << "," << j << "): " << prod[i][j] << " vs " << prod[j][i] << "\n";
+//     double eps = 1e-6;
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = i+1; j < numRows; j++)
+//             if (fabs(product[i][j] - product[j][i]) > eps) {
+//                 cout << "Discrepancy at (" << i << ", " << j << "): " 
+//                      << product[i][j] << " vs " << product[j][i] << endl;
 //                 symmetric = false;
 //             }
-//         }
-//     }
-//     if(symmetric)
-//         cout << "The product matrix is symmetric.\n";
+    
+//     if (symmetric)
+//         cout << "The product matrix is symmetric." << endl;
+//     else
+//         cout << "The product matrix is not symmetric." << endl;
+    
 //     return 0;
 // }
+
 
 // 8. Inverse Verification
 
 // #include <iostream>
 // #include <fstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // #include <cmath>
 // using namespace std;
 
-// void multiplyRow(const vector<vector<double>> &A, const vector<vector<double>> &B, vector<vector<double>> &P, int row) {
-//     int n = B.size();
-//     for (int j = 0; j < n; j++){
-//         double sum = 0;
-//         for (int k = 0; k < n; k++){
-//             sum += A[row][k] * B[k][j];
-//         }
-//         P[row][j] = sum;
+// vector<vector<double>> A, B, product;
+// int n; // dimension of the square matrices
+
+// struct ThreadData {
+//     int rowIndex;
+// };
+
+// void* computeProductRow(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int i = data->rowIndex;
+//     for (int j = 0; j < n; j++) {
+//         double sum = 0.0;
+//         for (int k = 0; k < n; k++)
+//             sum += A[i][k] * B[k][j];
+//         product[i][j] = sum;
 //     }
+//     pthread_exit(NULL);
 // }
 
-// bool isIdentity(const vector<vector<double>> &P, double tol = 1e-6) {
-//     int n = P.size();
-//     for (int i = 0; i < n; i++){
-//         for (int j = 0; j < n; j++){
-//             double expected = (i==j)? 1.0 : 0.0;
-//             if (fabs(P[i][j]-expected) > tol)
-//                 return false;
-//         }
+// int main() {
+//     ifstream finA("matrixA.txt");
+//     if (!finA) {
+//         cerr << "Error opening matrixA.txt" << endl;
+//         return 1;
 //     }
-//     return true;
-// }
-
-// Matrix readMatrix(const string &filename) {
-//     ifstream file(filename);
-//     int n, m;
-//     file >> n >> m;
-//     vector<vector<double>> mat(n, vector<double>(m));
+//     finA >> n;
+//     A.resize(n, vector<double>(n));
 //     for (int i = 0; i < n; i++)
-//         for (int j = 0; j < m; j++)
-//             file >> mat[i][j];
-//     return mat;
-// }
-
-// int main(){
-//     auto A = readMatrix("matrixA.txt");
-//     auto B = readMatrix("matrixB.txt");
-//     int n = A.size();
-//     vector<vector<double>> product(n, vector<double>(n, 0));
-//     vector<thread> threads;
-//     for (int i = 0; i < n; i++){
-//         threads.emplace_back(multiplyRow, cref(A), cref(B), ref(product), i);
+//         for (int j = 0; j < n; j++)
+//             finA >> A[i][j];
+//     finA.close();
+    
+//     ifstream finB("matrixB.txt");
+//     if (!finB) {
+//         cerr << "Error opening matrixB.txt" << endl;
+//         return 1;
 //     }
-//     for(auto &t: threads)
-//         t.join();
-//     if(isIdentity(product))
-//         cout << "MatrixB is the inverse of MatrixA.\n";
+//     int nB;
+//     finB >> nB;
+//     if (nB != n) {
+//         cerr << "Matrix dimensions do not match." << endl;
+//         return 1;
+//     }
+//     B.resize(n, vector<double>(n));
+//     for (int i = 0; i < n; i++)
+//         for (int j = 0; j < n; j++)
+//             finB >> B[i][j];
+//     finB.close();
+    
+//     product.resize(n, vector<double>(n, 0.0));
+//     vector<pthread_t> threads(n);
+//     vector<ThreadData> threadData(n);
+//     for (int i = 0; i < n; i++) {
+//         threadData[i].rowIndex = i;
+//         pthread_create(&threads[i], NULL, computeProductRow, (void*)&threadData[i]);
+//     }
+//     for (int i = 0; i < n; i++)
+//         pthread_join(threads[i], NULL);
+    
+//     // Check if product is approximately the identity matrix.
+//     bool isIdentity = true;
+//     double eps = 1e-6;
+//     for (int i = 0; i < n; i++)
+//         for (int j = 0; j < n; j++) {
+//             double expected = (i == j) ? 1.0 : 0.0;
+//             if (fabs(product[i][j] - expected) > eps) {
+//                 cout << "Mismatch at (" << i << ", " << j << "): " 
+//                      << product[i][j] << " vs " << expected << endl;
+//                 isIdentity = false;
+//             }
+//         }
+    
+//     if (isIdentity)
+//         cout << "Matrix B is the inverse of Matrix A." << endl;
 //     else
-//         cout << "MatrixB is NOT the inverse of MatrixA.\n";
+//         cout << "Matrix B is not the inverse of Matrix A." << endl;
+    
 //     return 0;
 // }
 
-// 9. Target Row Sum Match
 
+// 9. Target Row Sum Match
 
 // #include <iostream>
 // #include <fstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // #include <cmath>
-// #include <limits>
 // using namespace std;
 
-// void rowSum(const vector<int> &row, int &sum) {
-//     sum = 0;
-//     for (auto val : row)
-//         sum += val;
+// vector<vector<double>> matrix;
+// vector<double> rowSums;
+// int numRows, numCols;
+// double targetSum;
+
+// struct ThreadData {
+//     int rowIndex;
+// };
+
+// void* computeRowSum(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int i = data->rowIndex;
+//     double sum = 0.0;
+//     for (int j = 0; j < numCols; j++)
+//         sum += matrix[i][j];
+//     rowSums[i] = sum;
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     ifstream matrixFile("matrix.txt");
-//     ifstream targetFile("target.txt");
-//     if(!matrixFile || !targetFile){
-//         cerr << "Error opening file(s).\n";
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt" << endl;
 //         return 1;
 //     }
-//     int m, n;
-//     matrixFile >> m >> n;
-//     vector<vector<int>> matrix(m, vector<int>(n));
-//     for (int i = 0; i < m; i++){
-//         for (int j = 0; j < n; j++){
-//             matrixFile >> matrix[i][j];
-//         }
-//     }
-//     int target;
-//     targetFile >> target;
+//     fin >> numRows >> numCols;
+//     matrix.resize(numRows, vector<double>(numCols));
+//     rowSums.resize(numRows, 0.0);
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             fin >> matrix[i][j];
+//     fin.close();
     
-//     vector<int> sums(m, 0);
-//     vector<thread> threads;
-//     for (int i = 0; i < m; i++){
-//         threads.emplace_back(rowSum, cref(matrix[i]), ref(sums[i]));
+//     ifstream ftarget("target.txt");
+//     if (!ftarget) {
+//         cerr << "Error opening target.txt" << endl;
+//         return 1;
 //     }
-//     for(auto &t : threads)
-//         t.join();
-
-//     int bestRow = -1;
-//     int bestDiff = numeric_limits<int>::max();
-//     for (int i = 0; i < m; i++){
-//         int diff = abs(sums[i] - target);
-//         if(diff < bestDiff){
-//             bestDiff = diff;
+//     ftarget >> targetSum;
+//     ftarget.close();
+    
+//     vector<pthread_t> threads(numRows);
+//     vector<ThreadData> threadData(numRows);
+//     for (int i = 0; i < numRows; i++) {
+//         threadData[i].rowIndex = i;
+//         pthread_create(&threads[i], NULL, computeRowSum, (void*)&threadData[i]);
+//     }
+//     for (int i = 0; i < numRows; i++)
+//         pthread_join(threads[i], NULL);
+    
+//     int bestRow = 0;
+//     double minDiff = fabs(rowSums[0] - targetSum);
+//     for (int i = 1; i < numRows; i++) {
+//         double diff = fabs(rowSums[i] - targetSum);
+//         if (diff < minDiff) {
+//             minDiff = diff;
 //             bestRow = i;
 //         }
 //     }
-//     cout << "Row " << bestRow << " has the sum " << sums[bestRow] << " which is closest to target " << target << ".\n";
+    
+//     cout << "Row " << bestRow << " has sum " << rowSums[bestRow] 
+//          << " which is closest to target sum " << targetSum << endl;
 //     return 0;
 // }
-
 
 // 1. Scalar–Matrix Combination
 
 // #include <iostream>
 // #include <fstream>
-// #include <sstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// typedef vector<vector<double>> Matrix;
+// int numRows, numCols;
+// vector<vector<double>> matrix;
+// vector<vector<double>> scaledMatrix;
+// double traceResult = 0.0;
+// double scalar = 2.5;  // example scalar
 
-// void readMatrix(const string &filename, Matrix &mat) {
-//     ifstream fin(filename);
-//     if(!fin){
-//         cerr << "Error opening " << filename << "\n";
-//         exit(1);
+// // Thread function to scale the matrix
+// void* scaleMatrix(void* arg) {
+//     scaledMatrix.resize(numRows, vector<double>(numCols, 0));
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             scaledMatrix[i][j] = matrix[i][j] * scalar;
+//     pthread_exit(NULL);
+// }
+
+// // Thread function to compute the trace of the matrix
+// void* computeTrace(void* arg) {
+//     double sum = 0.0;
+//     int n = (numRows < numCols) ? numRows : numCols;
+//     for (int i = 0; i < n; i++)
+//         sum += matrix[i][i];
+//     traceResult = sum;
+//     pthread_exit(NULL);
+// }
+
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt" << endl;
+//         return 1;
 //     }
-//     int m, n;
-//     fin >> m >> n;
-//     mat.resize(m, vector<double>(n));
-//     for (int i = 0; i < m; i++)
-//         for (int j = 0; j < n; j++)
-//             fin >> mat[i][j];
-// }
+//     fin >> numRows >> numCols;
+//     matrix.resize(numRows, vector<double>(numCols));
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             fin >> matrix[i][j];
+//     fin.close();
 
-// void scaleMatrix(const Matrix &in, Matrix &out, double scalar) {
-//     int m = in.size(), n = in[0].size();
-//     out.resize(m, vector<double>(n));
-//     for (int i = 0; i < m; i++)
-//         for (int j = 0; j < n; j++)
-//             out[i][j] = in[i][j] * scalar;
-// }
+//     pthread_t thread1, thread2;
+//     pthread_create(&thread1, NULL, scaleMatrix, NULL);
+//     pthread_create(&thread2, NULL, computeTrace, NULL);
+//     pthread_join(thread1, NULL);
+//     pthread_join(thread2, NULL);
 
-// void computeTrace(const Matrix &mat, double &trace) {
-//     int m = mat.size(), n = mat[0].size();
-//     trace = 0;
-//     int diag = m < n ? m : n;
-//     for (int i = 0; i < diag; i++)
-//         trace += mat[i][i];
-// }
-
-// int main(){
-//     Matrix A;
-//     readMatrix("matrix.txt", A);
-//     double scalar = 2.5; // example scalar
-
-//     Matrix scaled;
-//     double trace = 0;
-
-//     thread t1(scaleMatrix, cref(A), ref(scaled), scalar);
-//     thread t2(computeTrace, cref(A), ref(trace));
-//     t1.join();
-//     t2.join();
-
-//     cout << "Scaled Matrix:\n";
-//     for (auto &row : scaled) {
-//         for (auto val : row)
-//             cout << val << " ";
+//     cout << "Scaled Matrix (each element multiplied by " << scalar << "):\n";
+//     for (int i = 0; i < numRows; i++) {
+//         for (int j = 0; j < numCols; j++)
+//             cout << scaledMatrix[i][j] << " ";
 //         cout << "\n";
 //     }
-//     cout << "Trace = " << trace << "\n";
+//     cout << "Trace of original matrix: " << traceResult << "\n";
 //     return 0;
 // }
-
 
 // 2. Trace and Diagonal Difference
 
 // #include <iostream>
 // #include <fstream>
-// #include <sstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
+// #include <cstdlib>
 // #include <cmath>
 // using namespace std;
 
-// typedef vector<vector<double>> Matrix;
+// int numRows, numCols;
+// vector<vector<double>> matrix;
+// double traceSum = 0.0;
+// double antiDiagSum = 0.0;
 
-// void readMatrix(const string &filename, Matrix &mat) {
-//     ifstream fin(filename);
-//     if(!fin){
-//         cerr << "Error opening " << filename << "\n";
-//         exit(1);
+// // Thread to compute main diagonal (trace)
+// void* computeTrace(void* arg) {
+//     double sum = 0.0;
+//     int n = (numRows < numCols) ? numRows : numCols;
+//     for (int i = 0; i < n; i++)
+//         sum += matrix[i][i];
+//     traceSum = sum;
+//     pthread_exit(NULL);
+// }
+
+// // Thread to compute anti-diagonal sum
+// void* computeAntiDiagonal(void* arg) {
+//     double sum = 0.0;
+//     int n = (numRows < numCols) ? numRows : numCols;
+//     for (int i = 0; i < n; i++)
+//         sum += matrix[i][n - i - 1];
+//     antiDiagSum = sum;
+//     pthread_exit(NULL);
+// }
+
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt" << endl;
+//         return 1;
 //     }
-//     int n, m;
-//     fin >> n >> m;
-//     mat.resize(n, vector<double>(m));
-//     for (int i = 0; i < n; i++)
-//         for (int j = 0; j < m; j++)
-//             fin >> mat[i][j];
-// }
+//     fin >> numRows >> numCols;
+//     matrix.resize(numRows, vector<double>(numCols));
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             fin >> matrix[i][j];
+//     fin.close();
 
-// void computeTrace(const Matrix &mat, double &trace) {
-//     int n = mat.size();
-//     trace = 0;
-//     for (int i = 0; i < n; i++)
-//         trace += mat[i][i];
-// }
+//     pthread_t thread1, thread2;
+//     pthread_create(&thread1, NULL, computeTrace, NULL);
+//     pthread_create(&thread2, NULL, computeAntiDiagonal, NULL);
+//     pthread_join(thread1, NULL);
+//     pthread_join(thread2, NULL);
 
-// void computeAntiDiagonal(const Matrix &mat, double &anti) {
-//     int n = mat.size();
-//     anti = 0;
-//     for (int i = 0; i < n; i++)
-//         anti += mat[i][n - 1 - i];
-// }
-
-// int main(){
-//     Matrix A;
-//     readMatrix("matrix.txt", A);
-
-//     double trace = 0, anti = 0;
-//     thread t1(computeTrace, cref(A), ref(trace));
-//     thread t2(computeAntiDiagonal, cref(A), ref(anti));
-//     t1.join();
-//     t2.join();
-
-//     cout << "Trace = " << trace << "\n";
-//     cout << "Anti-Diagonal Sum = " << anti << "\n";
-//     cout << "Absolute Difference = " << fabs(trace - anti) << "\n";
+//     double diff = fabs(traceSum - antiDiagSum);
+//     cout << "Trace: " << traceSum << "\n";
+//     cout << "Anti-diagonal sum: " << antiDiagSum << "\n";
+//     cout << "Absolute difference: " << diff << "\n";
 //     return 0;
 // }
 
 // 3. LU Decomposition and Determinant
 
-
 // #include <iostream>
 // #include <fstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// typedef vector<vector<double>> Matrix;
+// int n;
+// vector<vector<double>> A, L, U;
+// double detProduct = 1.0;
 
-// void readMatrix(const string &filename, Matrix &mat) {
-//     ifstream fin(filename);
-//     if (!fin) {
-//         cerr << "Error opening " << filename << "\n";
-//         exit(1);
-//     }
-//     int n, m;
-//     fin >> n >> m;
-//     mat.resize(n, vector<double>(m));
-//     for (int i = 0; i < n; i++)
-//         for (int j = 0; j < m; j++)
-//             fin >> mat[i][j];
-// }
-
-// void luDecomposition(const Matrix &A, Matrix &L, Matrix &U) {
-//     int n = A.size();
-//     L.assign(n, vector<double>(n, 0));
-//     U.assign(n, vector<double>(n, 0));
+// // Perform LU decomposition using Doolittle's method (L diagonal = 1)
+// void luDecomposition() {
+//     L.resize(n, vector<double>(n, 0));
+//     U.resize(n, vector<double>(n, 0));
 //     for (int i = 0; i < n; i++) {
-//         // Upper Triangular
-//         for (int k = i; k < n; k++) {
-//             double sum = 0;
-//             for (int j = 0; j < i; j++)
-//                 sum += L[i][j] * U[j][k];
-//             U[i][k] = A[i][k] - sum;
+//         L[i][i] = 1.0;
+//         for (int j = i; j < n; j++) {
+//             double sum = 0.0;
+//             for (int k = 0; k < i; k++)
+//                 sum += L[i][k] * U[k][j];
+//             U[i][j] = A[i][j] - sum;
 //         }
-//         // Lower Triangular
-//         for (int k = i; k < n; k++) {
-//             if (i == k)
-//                 L[i][i] = 1;
-//             else {
-//                 double sum = 0;
-//                 for (int j = 0; j < i; j++)
-//                     sum += L[k][j] * U[j][i];
-//                 L[k][i] = (A[k][i] - sum) / U[i][i];
+//         for (int j = i+1; j < n; j++) {
+//             double sum = 0.0;
+//             for (int k = 0; k < i; k++)
+//                 sum += L[j][k] * U[k][i];
+//             if (U[i][i] == 0) {
+//                 cerr << "Singular matrix\n";
+//                 exit(1);
 //             }
+//             L[j][i] = (A[j][i] - sum) / U[i][i];
 //         }
 //     }
 // }
 
-// void diagProduct(const Matrix &M, double &prod) {
-//     int n = M.size();
-//     prod = 1;
-//     for (int i = 0; i < n; i++)
-//         prod *= M[i][i];
+// struct ThreadData {
+//     int start;
+//     int end;
+//     double partialProduct;
+// };
+
+// void* computeDiagonalProduct(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     data->partialProduct = 1.0;
+//     for (int i = data->start; i < data->end; i++) {
+//         data->partialProduct *= U[i][i];
+//     }
+//     pthread_exit(NULL);
 // }
 
-// int main(){
-//     Matrix A;
-//     readMatrix("matrix.txt", A);
-//     int n = A.size();
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt" << endl;
+//         return 1;
+//     }
+//     fin >> n;
+//     A.resize(n, vector<double>(n));
+//     for (int i = 0; i < n; i++)
+//         for (int j = 0; j < n; j++)
+//             fin >> A[i][j];
+//     fin.close();
 
-//     Matrix L, U;
-//     luDecomposition(A, L, U);
+//     luDecomposition();
 
-//     double prodL = 0, prodU = 0;
-//     thread t1(diagProduct, cref(L), ref(prodL));
-//     thread t2(diagProduct, cref(U), ref(prodU));
-//     t1.join();
-//     t2.join();
-
-//     double determinant = prodL * prodU;
-//     cout << "Determinant = " << determinant << "\n";
+//     // Use 2 threads to compute product of U's diagonal elements.
+//     int numThreads = 2;
+//     pthread_t threads[numThreads];
+//     ThreadData threadData[numThreads];
+//     int chunk = n / numThreads;
+//     int extra = n % numThreads;
+//     int current = 0;
+//     for (int t = 0; t < numThreads; t++) {
+//         threadData[t].start = current;
+//         threadData[t].end = current + chunk + (t < extra ? 1 : 0);
+//         current = threadData[t].end;
+//         pthread_create(&threads[t], NULL, computeDiagonalProduct, (void*)&threadData[t]);
+//     }
+//     for (int t = 0; t < numThreads; t++) {
+//         pthread_join(threads[t], NULL);
+//         detProduct *= threadData[t].partialProduct;
+//     }
+//     cout << "Determinant (product of U diagonal): " << detProduct << "\n";
 //     return 0;
 // }
 
-
 // 4. Parallel Gaussian Elimination
-
 
 // #include <iostream>
 // #include <fstream>
-// #include <sstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // #include <iomanip>
 // using namespace std;
 
-// typedef vector<vector<double>> Matrix;
+// int n;
+// vector<vector<double>> aug; // augmented matrix
 
-// void readSystem(const string &filename, Matrix &aug) {
-//     ifstream fin(filename);
-//     if(!fin){
-//         cerr << "Error opening " << filename << "\n";
-//         exit(1);
+// struct ElimData {
+//     int pivot;
+//     int row;  // row to update
+// };
+
+// pthread_mutex_t mtx;  // not strictly needed here since threads work on separate rows
+
+// void* eliminate(void* arg) {
+//     ElimData* data = (ElimData*) arg;
+//     int i = data->row;
+//     int pivot = data->pivot;
+//     double factor = aug[i][pivot] / aug[pivot][pivot];
+//     for (int j = pivot; j <= n; j++) {
+//         aug[i][j] -= factor * aug[pivot][j];
 //     }
-//     int n;
+//     pthread_exit(NULL);
+// }
+
+// int main() {
+//     ifstream fin("system.txt");
+//     if (!fin) {
+//         cerr << "Error opening system.txt" << endl;
+//         return 1;
+//     }
 //     fin >> n;
 //     aug.resize(n, vector<double>(n+1));
 //     for (int i = 0; i < n; i++)
-//         for (int j = 0; j < n+1; j++)
+//         for (int j = 0; j <= n; j++)
 //             fin >> aug[i][j];
-// }
+//     fin.close();
 
-// void eliminateRow(Matrix &aug, int pivot, int row) {
-//     int n = aug.size();
-//     double factor = aug[row][pivot] / aug[pivot][pivot];
-//     for (int j = pivot; j < n+1; j++) {
-//         aug[row][j] -= factor * aug[pivot][j];
-//     }
-// }
-
-// int main(){
-//     Matrix aug;
-//     readSystem("system.txt", aug);
-//     int n = aug.size();
-
-//     // Forward elimination
+//     // Gaussian elimination
 //     for (int pivot = 0; pivot < n - 1; pivot++) {
-//         vector<thread> threads;
-//         for (int row = pivot + 1; row < n; row++) {
-//             threads.emplace_back(eliminateRow, ref(aug), pivot, row);
+//         int numThreads = n - pivot - 1;
+//         pthread_t threads[numThreads];
+//         vector<ElimData> threadData(numThreads);
+//         for (int i = pivot + 1, t = 0; i < n; i++, t++) {
+//             threadData[t].pivot = pivot;
+//             threadData[t].row = i;
+//             pthread_create(&threads[t], NULL, eliminate, (void*)&threadData[t]);
 //         }
-//         for (auto &t : threads)
-//             t.join();
+//         for (int t = 0; t < numThreads; t++)
+//             pthread_join(threads[t], NULL);
 //     }
 
 //     // Back substitution
-//     vector<double> x(n, 0);
-//     for (int i = n-1; i >= 0; i--) {
+//     vector<double> x(n);
+//     for (int i = n - 1; i >= 0; i--) {
 //         x[i] = aug[i][n];
-//         for (int j = i+1; j < n; j++) {
+//         for (int j = i + 1; j < n; j++) {
 //             x[i] -= aug[i][j] * x[j];
 //         }
 //         x[i] /= aug[i][i];
 //     }
-
-//     cout << "Solution Vector:\n";
-//     for (auto xi : x)
-//         cout << fixed << setprecision(4) << xi << " ";
-//     cout << "\n";
+//     cout << "Solution:\n";
+//     for (int i = 0; i < n; i++)
+//         cout << "x[" << i << "] = " << x[i] << "\n";
 //     return 0;
 // }
 
 
 // 5. Inverse Verification with Residual
 
-
 // #include <iostream>
 // #include <fstream>
-// #include <sstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // #include <cmath>
 // using namespace std;
 
-// typedef vector<vector<double>> Matrix;
-
-// bool invertMatrix(const Matrix &A, Matrix &inv) {
-//     // Assuming a 3x3 matrix; no pivoting.
-//     inv.resize(3, vector<double>(3, 0));
-//     double det = A[0][0]*(A[1][1]*A[2][2]-A[1][2]*A[2][1])
-//                - A[0][1]*(A[1][0]*A[2][2]-A[1][2]*A[2][0])
-//                + A[0][2]*(A[1][0]*A[2][1]-A[1][1]*A[2][0]);
-//     if(det == 0) return false;
-//     inv[0][0] =  (A[1][1]*A[2][2]-A[1][2]*A[2][1]) / det;
-//     inv[0][1] = -(A[0][1]*A[2][2]-A[0][2]*A[2][1]) / det;
-//     inv[0][2] =  (A[0][1]*A[1][2]-A[0][2]*A[1][1]) / det;
-//     inv[1][0] = -(A[1][0]*A[2][2]-A[1][2]*A[2][0]) / det;
-//     inv[1][1] =  (A[0][0]*A[2][2]-A[0][2]*A[2][0]) / det;
-//     inv[1][2] = -(A[0][0]*A[1][2]-A[0][2]*A[1][0]) / det;
-//     inv[2][0] =  (A[1][0]*A[2][1]-A[1][1]*A[2][0]) / det;
-//     inv[2][1] = -(A[0][0]*A[2][1]-A[0][1]*A[2][0]) / det;
-//     inv[2][2] =  (A[0][0]*A[1][1]-A[0][1]*A[1][0]) / det;
+// int n;
+// vector<vector<double>> A, inv, product;
+ 
+// // Compute inverse using Gauss-Jordan elimination
+// bool computeInverse(vector<vector<double>> A, vector<vector<double>>& inv) {
+//     n = A.size();
+//     inv.assign(n, vector<double>(n, 0));
+//     for (int i = 0; i < n; i++) {
+//         inv[i][i] = 1;
+//     }
+//     for (int i = 0; i < n; i++) {
+//         double pivot = A[i][i];
+//         if (fabs(pivot) < 1e-9)
+//             return false;
+//         for (int j = 0; j < n; j++) {
+//             A[i][j] /= pivot;
+//             inv[i][j] /= pivot;
+//         }
+//         for (int k = 0; k < n; k++) {
+//             if (k == i) continue;
+//             double factor = A[k][i];
+//             for (int j = 0; j < n; j++) {
+//                 A[k][j] -= factor * A[i][j];
+//                 inv[k][j] -= factor * inv[i][j];
+//             }
+//         }
+//     }
 //     return true;
 // }
 
-// void multiplyPartial(const Matrix &A, const Matrix &B, Matrix &C, int start, int end) {
-//     int n = A.size();
-//     for (int i = start; i < end; i++) {
+// struct ThreadData {
+//     int start;
+//     int end;
+// };
+
+// void* multiplyPart(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     for (int i = data->start; i < data->end; i++) {
 //         for (int j = 0; j < n; j++) {
-//             double sum = 0;
+//             double sum = 0.0;
 //             for (int k = 0; k < n; k++)
-//                 sum += A[i][k] * B[k][j];
-//             C[i][j] = sum;
+//                 sum += A[i][k] * inv[k][j];
+//             product[i][j] = sum;
 //         }
 //     }
+//     pthread_exit(NULL);
 // }
 
-// int main(){
+// int main() {
 //     ifstream fin("matrix.txt");
-//     if(!fin){
-//         cerr << "Cannot open matrix.txt\n";
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt\n";
 //         return 1;
 //     }
-//     // Assuming a 3x3 matrix
-//     Matrix A(3, vector<double>(3));
-//     for (int i = 0; i < 3; i++)
-//         for (int j = 0; j < 3; j++)
+//     fin >> n;
+//     A.resize(n, vector<double>(n));
+//     for (int i = 0; i < n; i++)
+//         for (int j = 0; j < n; j++)
 //             fin >> A[i][j];
+//     fin.close();
 
-//     Matrix Ainv;
-//     if(!invertMatrix(A, Ainv)){
-//         cerr << "Matrix is non-invertible.\n";
+//     if (!computeInverse(A, inv)) {
+//         cout << "Matrix is singular; cannot compute inverse.\n";
 //         return 1;
 //     }
 
-//     Matrix product(3, vector<double>(3, 0));
-//     int numThreads = 3;
-//     vector<thread> threads;
-//     int rowsPerThread = 3 / numThreads;
-//     for (int t = 0; t < numThreads; t++){
-//         int start = t * rowsPerThread;
-//         int end = (t == numThreads - 1) ? 3 : start + rowsPerThread;
-//         threads.emplace_back(multiplyPartial, cref(A), cref(Ainv), ref(product), start, end);
+//     product.resize(n, vector<double>(n, 0));
+//     int numThreads = 4;
+//     pthread_t threads[numThreads];
+//     ThreadData threadData[numThreads];
+//     int rowsPerThread = n / numThreads;
+//     int extra = n % numThreads;
+//     int current = 0;
+//     for (int t = 0; t < numThreads; t++) {
+//         threadData[t].start = current;
+//         threadData[t].end = current + rowsPerThread + (t < extra ? 1 : 0);
+//         current = threadData[t].end;
+//         pthread_create(&threads[t], NULL, multiplyPart, (void*)&threadData[t]);
 //     }
-//     for (auto &t : threads)
-//         t.join();
+//     for (int t = 0; t < numThreads; t++)
+//         pthread_join(threads[t], NULL);
 
-//     // Compute residual error ||A*Ainv - I||
-//     double residual = 0;
-//     for (int i = 0; i < 3; i++){
-//         for (int j = 0; j < 3; j++){
+//     // Calculate residual error: ||A*inv - I||
+//     double error = 0.0;
+//     for (int i = 0; i < n; i++)
+//         for (int j = 0; j < n; j++) {
 //             double expected = (i == j) ? 1.0 : 0.0;
-//             residual += fabs(product[i][j] - expected);
+//             error += fabs(product[i][j] - expected);
 //         }
-//     }
-//     cout << "Residual error = " << residual << "\n";
+//     cout << "Residual error (sum of absolute differences): " << error << "\n";
 //     return 0;
 // }
-
 
 // 6. Matrix–Vector Product and Norm
 
 // #include <iostream>
 // #include <fstream>
-// #include <sstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // #include <cmath>
 // using namespace std;
 
-// typedef vector<vector<double>> Matrix;
+// int numRows, numCols, vecSize;
+// vector<vector<double>> matrix;
+// vector<double> vec, result;
 
-// void readMatrix(const string &filename, Matrix &mat) {
-//     ifstream fin(filename);
-//     if(!fin){
-//         cerr << "Error opening " << filename << "\n";
-//         exit(1);
-//     }
-//     int m, n;
-//     fin >> m >> n;
-//     mat.resize(m, vector<double>(n));
-//     for (int i = 0; i < m; i++)
-//         for (int j = 0; j < n; j++)
-//             fin >> mat[i][j];
+// struct ThreadData {
+//     int row;
+// };
+
+// void* computeDot(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int i = data->row;
+//     double sum = 0.0;
+//     for (int j = 0; j < numCols; j++)
+//         sum += matrix[i][j] * vec[j];
+//     result[i] = sum;
+//     pthread_exit(NULL);
 // }
 
-// void readVector(const string &filename, vector<double> &vec) {
-//     ifstream fin(filename);
-//     if(!fin){
-//         cerr << "Error opening " << filename << "\n";
-//         exit(1);
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt\n";
+//         return 1;
 //     }
-//     int n;
-//     fin >> n;
-//     vec.resize(n);
-//     for (int i = 0; i < n; i++)
-//         fin >> vec[i];
-// }
+//     fin >> numRows >> numCols;
+//     matrix.resize(numRows, vector<double>(numCols));
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             fin >> matrix[i][j];
+//     fin.close();
 
-// void computeRowProduct(const vector<double> &row, const vector<double> &vec, double &res) {
-//     res = 0;
-//     for (size_t j = 0; j < row.size(); j++)
-//         res += row[j] * vec[j];
-// }
-
-// int main(){
-//     Matrix A;
-//     vector<double> vec;
-//     readMatrix("matrix.txt", A);
-//     readVector("vector.txt", vec);
-
-//     int m = A.size();
-//     vector<double> result(m, 0);
-//     vector<thread> threads;
-//     for (int i = 0; i < m; i++){
-//         threads.emplace_back(computeRowProduct, cref(A[i]), cref(vec), ref(result[i]));
+//     ifstream fvec("vector.txt");
+//     if (!fvec) {
+//         cerr << "Error opening vector.txt\n";
+//         return 1;
 //     }
-//     for (auto &t : threads)
-//         t.join();
+//     fvec >> vecSize;
+//     if (vecSize != numCols) {
+//         cerr << "Vector size must equal matrix columns.\n";
+//         return 1;
+//     }
+//     vec.resize(vecSize);
+//     for (int i = 0; i < vecSize; i++)
+//         fvec >> vec[i];
+//     fvec.close();
 
-//     double norm = 0;
-//     for (auto val : result)
+//     result.resize(numRows, 0.0);
+//     vector<pthread_t> threads(numRows);
+//     vector<ThreadData> threadData(numRows);
+//     for (int i = 0; i < numRows; i++) {
+//         threadData[i].row = i;
+//         pthread_create(&threads[i], NULL, computeDot, (void*)&threadData[i]);
+//     }
+//     for (int i = 0; i < numRows; i++)
+//         pthread_join(threads[i], NULL);
+
+//     // Compute Euclidean norm of the result vector
+//     double norm = 0.0;
+//     for (double val : result)
 //         norm += val * val;
 //     norm = sqrt(norm);
 
-//     cout << "Matrix-Vector Product:\n";
-//     for (auto val : result)
+//     cout << "Matrix-vector product:\n";
+//     for (double val : result)
 //         cout << val << " ";
-//     cout << "\nEuclidean Norm = " << norm << "\n";
+//     cout << "\nEuclidean norm: " << norm << "\n";
 //     return 0;
 // }
-
 
 // 7. Block Determinant Computation
 
 // #include <iostream>
 // #include <fstream>
-// #include <sstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// typedef vector<vector<double>> Matrix;
+// int n;
+// vector<vector<double>> M;
+// double detA = 0.0, detD = 0.0;
 
-// double determinant2x2(const Matrix &M) {
-//     return M[0][0]*M[1][1] - M[0][1]*M[1][0];
-// }
-
-// double determinant3x3(const Matrix &M) {
-//     return M[0][0]*(M[1][1]*M[2][2]-M[1][2]*M[2][1])
-//          - M[0][1]*(M[1][0]*M[2][2]-M[1][2]*M[2][0])
-//          + M[0][2]*(M[1][0]*M[2][1]-M[1][1]*M[2][0]);
-// }
-
-// // For simplicity, we assume blocks are 2x2.
-// double detBlock(const Matrix &block) {
-//     if(block.size() == 2)
-//         return determinant2x2(block);
-//     // Add other sizes as needed.
-//     return 0;
-// }
-
-// void readMatrix(const string &filename, Matrix &mat) {
-//     ifstream fin(filename);
-//     if(!fin){
-//         cerr << "Error opening " << filename << "\n";
-//         exit(1);
+// double computeDeterminant(const vector<vector<double>>& mat) {
+//     int dim = mat.size();
+//     if (dim == 1)
+//         return mat[0][0];
+//     if (dim == 2)
+//         return mat[0][0]*mat[1][1] - mat[0][1]*mat[1][0];
+//     double det = 0.0;
+//     for (int p = 0; p < dim; p++) {
+//         vector<vector<double>> submat(dim - 1, vector<double>(dim - 1));
+//         for (int i = 1; i < dim; i++) {
+//             int colIndex = 0;
+//             for (int j = 0; j < dim; j++) {
+//                 if (j == p) continue;
+//                 submat[i-1][colIndex++] = mat[i][j];
+//             }
+//         }
+//         det += (p % 2 == 0 ? 1 : -1) * mat[0][p] * computeDeterminant(submat);
 //     }
-//     int m, n;
-//     fin >> m >> n;
-//     mat.resize(m, vector<double>(n));
-//     for (int i = 0; i < m; i++)
-//         for (int j = 0; j < n; j++)
-//             fin >> mat[i][j];
+//     return det;
 // }
 
-// int main(){
-//     Matrix A;
-//     readMatrix("matrix.txt", A);
-//     int n = A.size();
-//     if(n % 2 != 0){
-//         cerr << "Matrix size not even, cannot partition into equal blocks.\n";
+// struct ThreadData {
+//     int block; // 0 for top-left, 1 for bottom-right
+// };
+
+// void* computeBlockDeterminant(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int half = n / 2;
+//     vector<vector<double>> blockMat(half, vector<double>(half));
+//     if (data->block == 0) {
+//         // top-left block
+//         for (int i = 0; i < half; i++)
+//             for (int j = 0; j < half; j++)
+//                 blockMat[i][j] = M[i][j];
+//         detA = computeDeterminant(blockMat);
+//     } else {
+//         // bottom-right block
+//         for (int i = half; i < n; i++)
+//             for (int j = half; j < n; j++)
+//                 blockMat[i - half][j - half] = M[i][j];
+//         detD = computeDeterminant(blockMat);
+//     }
+//     pthread_exit(NULL);
+// }
+
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt\n";
 //         return 1;
 //     }
-//     int half = n / 2;
-//     // Partition A into 4 blocks: A11, A12, A21, A22.
-//     Matrix A11(half, vector<double>(half));
-//     Matrix A12(half, vector<double>(half));
-//     Matrix A21(half, vector<double>(half));
-//     Matrix A22(half, vector<double>(half));
-//     for (int i = 0; i < half; i++){
-//         for (int j = 0; j < half; j++){
-//             A11[i][j] = A[i][j];
-//             A12[i][j] = A[i][j+half];
-//             A21[i][j] = A[i+half][j];
-//             A22[i][j] = A[i+half][j+half];
-//         }
+//     fin >> n;
+//     if (n % 2 != 0) {
+//         cerr << "Matrix dimension must be even for block partitioning.\n";
+//         return 1;
 //     }
-//     double detA11 = 0, detA22 = 0;
-//     thread t1([&](){ detA11 = detBlock(A11); });
-//     thread t2([&](){ detA22 = detBlock(A22); });
-//     t1.join();
-//     t2.join();
+//     M.resize(n, vector<double>(n));
+//     for (int i = 0; i < n; i++)
+//         for (int j = 0; j < n; j++)
+//             fin >> M[i][j];
+//     fin.close();
 
-//     // Assuming off-diagonal blocks are zeros, the determinant of A = det(A11)*det(A22)
-//     double detA = detA11 * detA22;
-//     cout << "Determinant of A (from block computation) = " << detA << "\n";
+//     pthread_t threads[2];
+//     ThreadData data[2];
+//     data[0].block = 0;
+//     data[1].block = 1;
+//     pthread_create(&threads[0], NULL, computeBlockDeterminant, (void*)&data[0]);
+//     pthread_create(&threads[1], NULL, computeBlockDeterminant, (void*)&data[1]);
+//     pthread_join(threads[0], NULL);
+//     pthread_join(threads[1], NULL);
+
+//     double totalDet = detA * detD;  // valid if off-diagonals are zero
+//     cout << "Determinant of top-left block: " << detA << "\n";
+//     cout << "Determinant of bottom-right block: " << detD << "\n";
+//     cout << "Determinant of full matrix (assuming block-diagonal): " << totalDet << "\n";
 //     return 0;
 // }
-
 
 // 8. Row Cumulative Sum
 
 // #include <iostream>
 // #include <fstream>
-// #include <sstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// typedef vector<vector<double>> Matrix;
+// int numRows, numCols;
+// vector<vector<double>> matrix;
+// vector<double> rowAverage;
 
-// void readMatrix(const string &filename, Matrix &mat) {
-//     ifstream fin(filename);
-//     if(!fin){
-//         cerr << "Error opening " << filename << "\n";
-//         exit(1);
+// struct ThreadData {
+//     int row;
+// };
+
+// void* computeCumulativeSum(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int i = data->row;
+//     double cumulative = 0.0;
+//     for (int j = 0; j < numCols; j++) {
+//         cumulative += matrix[i][j];
 //     }
-//     int m, n;
-//     fin >> m >> n;
-//     mat.resize(m, vector<double>(n));
-//     for (int i = 0; i < m; i++)
-//         for (int j = 0; j < n; j++)
-//             fin >> mat[i][j];
+//     rowAverage[i] = cumulative / numCols;
+//     pthread_exit(NULL);
 // }
 
-// void computeRowSum(const vector<double> &row, double &sum) {
-//     sum = 0;
-//     for (auto val : row)
-//         sum += val;
-// }
+// int main() {
+//     ifstream fin("matrix.txt");
+//     if (!fin) {
+//         cerr << "Error opening matrix.txt\n";
+//         return 1;
+//     }
+//     fin >> numRows >> numCols;
+//     matrix.resize(numRows, vector<double>(numCols));
+//     rowAverage.resize(numRows, 0.0);
+//     for (int i = 0; i < numRows; i++)
+//         for (int j = 0; j < numCols; j++)
+//             fin >> matrix[i][j];
+//     fin.close();
 
-// int main(){
-//     Matrix A;
-//     readMatrix("matrix.txt", A);
-//     int m = A.size(), n = A[0].size();
-//     vector<double> rowSums(m, 0);
-//     vector<thread> threads;
-//     for (int i = 0; i < m; i++){
-//         threads.emplace_back(computeRowSum, cref(A[i]), ref(rowSums[i]));
+//     vector<pthread_t> threads(numRows);
+//     vector<ThreadData> threadData(numRows);
+//     for (int i = 0; i < numRows; i++) {
+//         threadData[i].row = i;
+//         pthread_create(&threads[i], NULL, computeCumulativeSum, (void*)&threadData[i]);
 //     }
-//     for (auto &t : threads)
-//         t.join();
-//     cout << "Row averages:\n";
-//     for (int i = 0; i < m; i++){
-//         double avg = rowSums[i] / n;
-//         cout << "Row " << i << " average = " << avg << "\n";
-//     }
+//     for (int i = 0; i < numRows; i++)
+//         pthread_join(threads[i], NULL);
+
+//     cout << "Row averages based on cumulative sums:\n";
+//     for (int i = 0; i < numRows; i++)
+//         cout << "Row " << i << " average: " << rowAverage[i] << "\n";
 //     return 0;
 // }
 
@@ -1659,84 +1923,93 @@
 
 // #include <iostream>
 // #include <fstream>
-// #include <sstream>
 // #include <vector>
-// #include <thread>
+// #include <pthread.h>
 // using namespace std;
 
-// typedef vector<vector<double>> Matrix;
+// int rows1, cols1, rows2, cols2;
+// vector<vector<double>> M1, M2, product;
+// double threshold = 10.0;
 
-// void readMatrix(const string &filename, Matrix &mat) {
-//     ifstream fin(filename);
-//     if(!fin){
-//         cerr << "Error opening " << filename << "\n";
-//         exit(1);
+// struct ThreadData {
+//     int row;
+// };
+
+// void* multiplyRow(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int i = data->row;
+//     for (int j = 0; j < cols2; j++) {
+//         double sum = 0.0;
+//         for (int k = 0; k < cols1; k++)
+//             sum += M1[i][k] * M2[k][j];
+//         product[i][j] = sum;
 //     }
-//     int m, n;
-//     fin >> m >> n;
-//     mat.resize(m, vector<double>(n));
-//     for (int i = 0; i < m; i++)
-//         for (int j = 0; j < n; j++)
-//             fin >> mat[i][j];
+//     pthread_exit(NULL);
 // }
 
-// void multiplyRows(const Matrix &A, const Matrix &B, Matrix &C, int start, int end) {
-//     int m = A.size(), n = B[0].size(), p = B.size();
-//     for (int i = start; i < end; i++){
-//         for (int j = 0; j < n; j++){
-//             double sum = 0;
-//             for (int k = 0; k < p; k++){
-//                 sum += A[i][k] * B[k][j];
-//             }
-//             C[i][j] = sum;
-//         }
+// void* thresholdRow(void* arg) {
+//     ThreadData* data = (ThreadData*) arg;
+//     int i = data->row;
+//     for (int j = 0; j < cols2; j++) {
+//         if (product[i][j] < threshold)
+//             product[i][j] = 0;
 //     }
+//     pthread_exit(NULL);
 // }
 
-// void thresholdOperation(Matrix &M, int start, int end, double threshold) {
-//     int cols = M[0].size();
-//     for (int i = start; i < end; i++){
-//         for (int j = 0; j < cols; j++){
-//             if (M[i][j] < threshold)
-//                 M[i][j] = 0;
-//         }
+// int main() {
+//     ifstream fin1("matrix1.txt");
+//     if (!fin1) {
+//         cerr << "Error opening matrix1.txt\n";
+//         return 1;
 //     }
-// }
+//     fin1 >> rows1 >> cols1;
+//     M1.resize(rows1, vector<double>(cols1));
+//     for (int i = 0; i < rows1; i++)
+//         for (int j = 0; j < cols1; j++)
+//             fin1 >> M1[i][j];
+//     fin1.close();
 
-// int main(){
-//     Matrix A, B;
-//     readMatrix("matrixA.txt", A);
-//     readMatrix("matrixB.txt", B);
-//     int m = A.size(), n = B[0].size();
-//     Matrix product(m, vector<double>(n, 0));
-
-//     // Matrix multiplication with threads (each thread handles a subset of rows)
-//     int numThreads = 4;
-//     vector<thread> threads;
-//     int rowsPerThread = m / numThreads;
-//     for (int t = 0; t < numThreads; t++){
-//         int start = t * rowsPerThread;
-//         int end = (t == numThreads - 1) ? m : start + rowsPerThread;
-//         threads.emplace_back(multiplyRows, cref(A), cref(B), ref(product), start, end);
+//     ifstream fin2("matrix2.txt");
+//     if (!fin2) {
+//         cerr << "Error opening matrix2.txt\n";
+//         return 1;
 //     }
-//     for (auto &t : threads)
-//         t.join();
-
-//     // Element-wise threshold operation (for example, set values below 10 to 0)
-//     double threshold = 10.0;
-//     threads.clear();
-//     for (int t = 0; t < numThreads; t++){
-//         int start = t * rowsPerThread;
-//         int end = (t == numThreads - 1) ? m : start + rowsPerThread;
-//         threads.emplace_back(thresholdOperation, ref(product), start, end, threshold);
+//     fin2 >> rows2 >> cols2;
+//     if (cols1 != rows2) {
+//         cerr << "Incompatible matrix dimensions for multiplication.\n";
+//         return 1;
 //     }
-//     for (auto &t : threads)
-//         t.join();
+//     M2.resize(rows2, vector<double>(cols2));
+//     for (int i = 0; i < rows2; i++)
+//         for (int j = 0; j < cols2; j++)
+//             fin2 >> M2[i][j];
+//     fin2.close();
 
-//     cout << "Modified Product Matrix:\n";
-//     for (auto &row : product){
-//         for (auto val : row)
-//             cout << val << " ";
+//     product.resize(rows1, vector<double>(cols2, 0));
+
+//     // Multiply matrices concurrently (one thread per row)
+//     vector<pthread_t> threadsMul(rows1);
+//     vector<ThreadData> threadData(rows1);
+//     for (int i = 0; i < rows1; i++) {
+//         threadData[i].row = i;
+//         pthread_create(&threadsMul[i], NULL, multiplyRow, (void*)&threadData[i]);
+//     }
+//     for (int i = 0; i < rows1; i++)
+//         pthread_join(threadsMul[i], NULL);
+
+//     // Apply threshold concurrently (one thread per row)
+//     vector<pthread_t> threadsThresh(rows1);
+//     for (int i = 0; i < rows1; i++) {
+//         pthread_create(&threadsThresh[i], NULL, thresholdRow, (void*)&threadData[i]);
+//     }
+//     for (int i = 0; i < rows1; i++)
+//         pthread_join(threadsThresh[i], NULL);
+
+//     cout << "Modified Product Matrix after thresholding (threshold = " << threshold << "):\n";
+//     for (int i = 0; i < rows1; i++) {
+//         for (int j = 0; j < cols2; j++)
+//             cout << product[i][j] << " ";
 //         cout << "\n";
 //     }
 //     return 0;
